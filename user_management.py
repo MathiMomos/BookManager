@@ -28,13 +28,13 @@ def login(username, password):
     if result:
         hashed_password = hash_password(password)
         if result[0] == hashed_password:
-            print(f"Login successful. Welcome {username} ({result[1]})")
+            print(f"Inicio de sesion exitoso. Bienvenido {username} ({result[1]})")
             connection.close()
             return True
         else:
-            print("Incorrect password")
+            print("Contrasena incorrecta")
     else:
-        print("User not found")
+        print("Usuario no encontrado")
     
     connection.close()
     return False
@@ -49,13 +49,13 @@ def add_user(admin, new_user, password, role):
             cursor.execute("INSERT INTO users (username, password, role) VALUES (?, ?, ?)", 
                            (new_user, hash_password(password), role))
             connection.commit()
-            print(f"User {new_user} with role {role} added successfully.")
+            print(f"Se anadio al usuario {new_user} con rol {role}.")
         except sqlite3.IntegrityError:
-            print("Error: The user already exists.")
+            print("Error: El usuario ya existe.")
         
         connection.close()
     else:
-        print("Only admins can add new users.")
+        print("Solo los administradores pueden agregar usuarios.")
 
 # BORRAR USUARIO (ADMIN)
 def delete_user(admin, user_to_delete):
@@ -66,13 +66,13 @@ def delete_user(admin, user_to_delete):
         cursor.execute("DELETE FROM users WHERE username = ?", (user_to_delete,))
         if cursor.rowcount > 0:
             connection.commit()
-            print(f"User {user_to_delete} deleted successfully.")
+            print(f"El usuario {user_to_delete} fue eliminado.")
         else:
-            print("User does not exist.")
+            print("Error: El usuario no existe.")
         
         connection.close()
     else:
-        print("Only admins can delete users.")
+        print("Solo los administradores pueden eliminar usuarios.")
 
 # CAMBIAR CONTRASENA
 def change_password(username, current_password, new_password):
@@ -88,11 +88,11 @@ def change_password(username, current_password, new_password):
             cursor.execute("UPDATE users SET password = ? WHERE username = ?", 
                            (hash_password(new_password), username))
             connection.commit()
-            print(f"Password successfully changed for user {username}.")
+            print(f"La contrasena para {username} se cambio.")
         else:
-            print("Current password is incorrect.")
+            print("Contrasena actual incorrecta.")
     else:
-        print("User not found.")
+        print("Usuario no encontrado.")
     
     connection.close()
 
@@ -106,11 +106,11 @@ def show_users(admin):
         users = cursor.fetchall()
         
         for username, role in users:
-            print(f"User: {username}, Role: {role}")
+            print(f"Usuario: {username}, Rol: {role}")
         
         connection.close()
     else:
-        print("Only admins can view the list of users.")
+        print("Solo los administradores pueden ver la lista de usuarios.")
 
 # COMPROBAR ROL
 def check_role(username, required_role):
