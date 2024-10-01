@@ -1,6 +1,6 @@
 # main.py
 
-# Importar las funciones del módulo user_management
+# Importar las funciones del modulo user_management
 from user_management import login, add_user, delete_user, change_password, show_users, create_initial_admin
 
 def main():
@@ -11,7 +11,7 @@ def main():
     username = input("Ingresa tu nombre de usuario: ")
     password = input("Ingresa tu contrasena: ")
 
-    # Iniciar sesión
+    # Iniciar sesion
     if login(username, password):
         print("Sesión iniciada.")
     else:
