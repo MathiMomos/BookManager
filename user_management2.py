@@ -97,7 +97,3 @@ def create_initial_admin():
         users_df.loc['admin'] = [hash_password('admin123'), 'admin']
         save_users(users_df)
         print("Initial admin created: username 'admin', password 'admin123'")
-
-# Prueba inicial
-create_initial_admin()
-
