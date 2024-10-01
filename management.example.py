@@ -1,4 +1,4 @@
-# Importar las funciones del módulo user_management
+# Importar las funciones del módulo user_management2
 from user_management import login, add_user, delete_user, change_password, show_users, create_initial_admin
 
 # Crear el usuario admin inicial
