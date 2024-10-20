@@ -5,7 +5,7 @@ import pandas as pd
 
 # Conexión y manejo de la base de datos SQLite
 def crear_tabla():
-    conexion = sqlite3.connect('inventario.db')
+    conexion = sqlite3.connect('BookManager/inventario.db')  # Cambiado a la ruta correcta
     cursor = conexion.cursor()
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS inventario (
@@ -19,7 +19,7 @@ def crear_tabla():
     conexion.close()
 
 def cargar_productos_desde_db():
-    conexion = sqlite3.connect('inventario.db')
+    conexion = sqlite3.connect('BookManager/inventario.db')  # Cambiado a la ruta correcta
     cursor = conexion.cursor()
     cursor.execute('SELECT * FROM inventario')
     productos = cursor.fetchall()
@@ -27,7 +27,7 @@ def cargar_productos_desde_db():
     return productos
 
 def agregar_producto_db(id_producto, nombre, cantidad, precio):
-    conexion = sqlite3.connect('inventario.db')
+    conexion = sqlite3.connect('BookManager/inventario.db')  # Cambiado a la ruta correcta
     cursor = conexion.cursor()
     cursor.execute('''
         INSERT OR REPLACE INTO inventario (id_producto, nombre, cantidad, precio)
@@ -37,11 +37,12 @@ def agregar_producto_db(id_producto, nombre, cantidad, precio):
     conexion.close()
 
 def eliminar_producto_db(id_producto):
-    conexion = sqlite3.connect('inventario.db')
+    conexion = sqlite3.connect('BookManager/inventario.db')  # Cambiado a la ruta correcta
     cursor = conexion.cursor()
     cursor.execute('DELETE FROM inventario WHERE id_producto = ?', (id_producto,))
     conexion.commit()
     conexion.close()
+
 
 # Estructura de datos dinámica: Lista en Python para manejar el inventario en memoria
 class SistemaInventario:
