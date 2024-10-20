@@ -140,7 +140,7 @@ def limpiar_campos():
     entry_posicion_producto.delete(0, tk.END)
 
 def guardar_inventario_excel():
-    archivo_excel = "inventario.xlsx"
+    archivo_excel = "BookManager/inventario.xlsx"  # Guardar dentro de la carpeta BookManager
     inventario.guardar_inventario_excel(archivo_excel)
     messagebox.showinfo("Éxito", f"Inventario guardado en {archivo_excel}")
 
