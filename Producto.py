@@ -1,22 +1,73 @@
+import sqlite3
 import tkinter as tk
 from tkinter import messagebox
+import pandas as pd
 
-# Estructura de datos con lista para manejar el inventario con orden
+# Conexión y manejo de la base de datos SQLite
+def crear_tabla():
+    conexion = sqlite3.connect('inventario.db')
+    cursor = conexion.cursor()
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS inventario (
+            id_producto TEXT PRIMARY KEY,
+            nombre TEXT,
+            cantidad INTEGER,
+            precio REAL
+        )
+    ''')
+    conexion.commit()
+    conexion.close()
+
+def cargar_productos_desde_db():
+    conexion = sqlite3.connect('inventario.db')
+    cursor = conexion.cursor()
+    cursor.execute('SELECT * FROM inventario')
+    productos = cursor.fetchall()
+    conexion.close()
+    return productos
+
+def agregar_producto_db(id_producto, nombre, cantidad, precio):
+    conexion = sqlite3.connect('inventario.db')
+    cursor = conexion.cursor()
+    cursor.execute('''
+        INSERT OR REPLACE INTO inventario (id_producto, nombre, cantidad, precio)
+        VALUES (?, ?, ?, ?)
+    ''', (id_producto, nombre, cantidad, precio))
+    conexion.commit()
+    conexion.close()
+
+def eliminar_producto_db(id_producto):
+    conexion = sqlite3.connect('inventario.db')
+    cursor = conexion.cursor()
+    cursor.execute('DELETE FROM inventario WHERE id_producto = ?', (id_producto,))
+    conexion.commit()
+    conexion.close()
+
+# Estructura de datos dinámica: Lista en Python para manejar el inventario en memoria
 class SistemaInventario:
     def __init__(self):
-        self.inventario = []  # Lista para manejar productos en orden
+        crear_tabla()  # Crear tabla si no existe (manejo externo: base de datos)
+        self.inventario = []  # Lista dinámica para manejar productos internamente
+        self.cargar_inventario_desde_db()
 
+    def cargar_inventario_desde_db(self):
+        productos_db = cargar_productos_desde_db()
+        # Cargar productos desde la base de datos hacia la estructura dinámica interna (lista)
+        self.inventario = [{'id': prod[0], 'nombre': prod[1], 'cantidad': prod[2], 'precio': prod[3]} for prod in productos_db]
+    
     def agregar_producto(self, id_producto, nombre, cantidad, precio, posicion=None):
         producto = {'id': id_producto, 'nombre': nombre, 'cantidad': cantidad, 'precio': precio}
-        if posicion is None or posicion >= len(self.inventario):
-            self.inventario.append(producto)
+        if posicion is None or posicion > len(self.inventario):
+            self.inventario.append(producto)  # Agregar al final de la lista dinámica
         else:
-            self.inventario.insert(posicion, producto)
-        print(f"Producto {nombre} agregado en la posición {posicion if posicion is not None else len(self.inventario) - 1}.")
+            self.inventario.insert(posicion - 1, producto)  # Insertar en posición específica
+        agregar_producto_db(id_producto, nombre, cantidad, precio)  # Almacenar externamente
+        print(f"Producto {nombre} agregado en la posición {posicion if posicion is not None else len(self.inventario)}.")
     
     def eliminar_producto(self, posicion):
-        if 0 <= posicion < len(self.inventario):
-            producto = self.inventario.pop(posicion)
+        if 1 <= posicion <= len(self.inventario):
+            producto = self.inventario.pop(posicion - 1)  # Eliminar de la lista dinámica
+            eliminar_producto_db(producto['id'])  # Eliminar también de la base de datos (almacenamiento)
             print(f"Producto {producto['nombre']} eliminado de la posición {posicion}.")
             return producto
         else:
@@ -26,14 +77,16 @@ class SistemaInventario:
     def buscar_producto(self, id_producto):
         for idx, producto in enumerate(self.inventario):
             if producto['id'] == id_producto:
-                return idx, producto
+                return idx + 1, producto  # Retornar posición basada en 1 y el producto
         return None, None
     
     def mostrar_inventario(self):
         return self.inventario
 
-# Inicialización de estructuras
-inventario = SistemaInventario()
+    def guardar_inventario_excel(self, archivo_excel):
+        df = pd.DataFrame(self.inventario)
+        df.to_excel(archivo_excel, index=False)
+        print(f"Inventario guardado en {archivo_excel}.")
 
 # Funciones de la GUI
 def agregar_producto():
@@ -49,8 +102,8 @@ def agregar_producto():
     else:
         posicion = None  # Si no se ingresa una posición válida, se agregará al final
 
-    if posicion is not None and (posicion < 0 or posicion > len(inventario.mostrar_inventario())):
-        messagebox.showwarning("Posición inválida", f"Posición fuera de rango. Inserta en un rango válido de 0 a {len(inventario.mostrar_inventario())}")
+    if posicion is not None and (posicion < 1 or posicion > len(inventario.mostrar_inventario()) + 1):
+        messagebox.showwarning("Posición inválida", f"Posición fuera de rango. Inserta en un rango válido de 1 a {len(inventario.mostrar_inventario()) + 1}")
     else:
         inventario.agregar_producto(id_producto, nombre, cantidad, precio, posicion)
         actualizar_listbox()
@@ -60,9 +113,9 @@ def agregar_producto():
 def eliminar_producto():
     posicion = lb_inventario.curselection()  # Obtener la posición seleccionada
     if posicion:
-        inventario.eliminar_producto(posicion[0])
+        inventario.eliminar_producto(posicion[0] + 1)  # Basado en 1
         actualizar_listbox()
-        messagebox.showinfo("Éxito", f"Producto eliminado de la posición {posicion[0]}")
+        messagebox.showinfo("Éxito", f"Producto eliminado de la posición {posicion[0] + 1}")
     else:
         messagebox.showwarning("Error", "Seleccione un producto para eliminar")
 
@@ -77,7 +130,7 @@ def buscar_producto():
 def actualizar_listbox():
     lb_inventario.delete(0, tk.END)  # Limpiar el Listbox
     for idx, producto in enumerate(inventario.mostrar_inventario()):
-        lb_inventario.insert(tk.END, f"Pos {idx}: {producto['nombre']} - Cantidad: {producto['cantidad']}, Precio: {producto['precio']}")
+        lb_inventario.insert(tk.END, f"Pos {idx + 1}: {producto['nombre']} - Cantidad: {producto['cantidad']}, Precio: {producto['precio']}")  # Basado en 1
 
 def limpiar_campos():
     entry_id_producto.delete(0, tk.END)
@@ -85,6 +138,17 @@ def limpiar_campos():
     entry_cantidad_producto.delete(0, tk.END)
     entry_precio_producto.delete(0, tk.END)
     entry_posicion_producto.delete(0, tk.END)
+
+def guardar_inventario_excel():
+    archivo_excel = "inventario.xlsx"
+    inventario.guardar_inventario_excel(archivo_excel)
+    messagebox.showinfo("Éxito", f"Inventario guardado en {archivo_excel}")
+
+# Crear la base de datos y la tabla
+crear_tabla()
+
+# Inicialización de estructuras
+inventario = SistemaInventario()
 
 # Creación de la ventana principal
 root = tk.Tk()
@@ -136,6 +200,12 @@ tk.Label(frame_buscar, text="Buscar Producto por ID:").grid(row=0, column=0)
 entry_buscar_producto = tk.Entry(frame_buscar)
 entry_buscar_producto.grid(row=0, column=1)
 tk.Button(frame_buscar, text="Buscar", command=buscar_producto).grid(row=1, column=0, columnspan=2)
+
+# Botón para guardar el inventario en Excel
+tk.Button(root, text="Guardar Inventario en Excel", command=guardar_inventario_excel).pack(pady=10)
+
+# Cargar el inventario inicial en el Listbox
+actualizar_listbox()
 
 # Iniciar la ventana principal
 root.mainloop()
