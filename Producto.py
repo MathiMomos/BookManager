@@ -3,9 +3,16 @@ import tkinter as tk
 from tkinter import messagebox
 import pandas as pd
 
+import os
+import sqlite3
+
+# Asegúrate de que la carpeta BookManager existe
+if not os.path.exists('BookManager'):
+    os.makedirs('BookManager')  # Crear la carpeta si no existe
+
 # Conexión y manejo de la base de datos SQLite
 def crear_tabla():
-    conexion = sqlite3.connect('BookManager/inventario.db')  # Cambiado a la ruta correcta
+    conexion = sqlite3.connect('BookManager/inventario.db')  # Asegúrate de que la ruta sea correcta
     cursor = conexion.cursor()
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS inventario (
@@ -17,6 +24,7 @@ def crear_tabla():
     ''')
     conexion.commit()
     conexion.close()
+
 
 def cargar_productos_desde_db():
     conexion = sqlite3.connect('BookManager/inventario.db')  # Cambiado a la ruta correcta
