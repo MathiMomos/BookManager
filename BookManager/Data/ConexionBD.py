@@ -5,8 +5,23 @@ class ConexionBD:
     def conexion_usuarios(self):
         pass
     
+    #CONEXION A BD INVENTARIO.DB:
     def conexion_inventario(self):
-        pass
+        conexion = sqlite3.connect("BookManager\\Data\\inventario.db")
+        cursor = conexion.cursor()
+        
+        # Crear tabla productos si no existe
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS productos (
+            idProducto INTEGER PRIMARY KEY AUTOINCREMENT,
+            nombre TEXT NOT NULL,
+            cantidad INTEGER NOT NULL,
+            precio DECIMAL(10, 2) NOT NULL,
+            descripcion TEXT
+        )""")
+        
+        cursor.close()
+        return conexion
     
     def conexion_ventas(self):
         conexion = sqlite3.connect("BookManager\\Data\\ventas.db")

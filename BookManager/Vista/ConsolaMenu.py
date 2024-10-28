@@ -1,7 +1,8 @@
 from BookManager.Controlador.AdministradorControlador import Administrador
 #from BookManager.Controlador.UsuarioControlador import Usuario
 from BookManager.Controlador.VentasControlador import VentasControlador
-
+#INTEGRACIÓN INVENTARIO CONTROLADOR:
+from BookManager.Controlador.InventarioControlador import InventarioControlador
 
 class ConsolaMenu:
     def __init__(self):
@@ -42,7 +43,53 @@ class ConsolaMenu:
         else:
             print("Rol no existe")
     
-    
+    #INVENTARIO CONTROLADOR:
+    def __init__(self):
+        self.controlador_inventario = InventarioControlador()  # Inicializar controlador de inventario
+
+    def gestionarInventario(self):
+        while(True):
+            print("1. Agregar producto")
+            print("2. Eliminar producto")
+            print("3. Modificar producto")
+            print("4. Buscar producto")
+            print("0. Volver")
+            try:
+                opcion = int(input("Ingrese su opcion: "))
+            except ValueError as error:
+                print(f"Opcion invalida. Error {error}")
+        
+            if opcion == 1:
+                self.agregarProducto()
+            elif opcion == 2:
+                self.eliminarProducto()
+            elif opcion == 3:
+                self.modificarProducto()
+            elif opcion == 4:
+                self.buscarProducto()
+            elif opcion == 0:
+                print("Volviendo")
+                break
+
+    def agregarProducto(self):
+        nombre = input("Nombre del producto: ")
+        cantidad = int(input("Cantidad: "))
+        precio = float(input("Precio: "))
+        descripcion = input("Descripción: ")
+        self.controlador_inventario.agregarProducto(nombre, cantidad, precio, descripcion)
+
+    def eliminarProducto(self):
+        nombre = input("Nombre del producto a eliminar: ")
+        self.controlador_inventario.eliminarProducto(nombre)
+
+    def modificarProducto(self):
+        nombre = input("Nombre del producto a modificar: ")
+        nueva_cantidad = int(input("Nueva cantidad: "))
+        self.controlador_inventario.modificarProducto(nombre, nueva_cantidad)
+
+    def buscarProducto(self):
+        nombre = input("Nombre del producto a buscar: ")
+        self.controlador_inventario.buscarProducto(nombre)
     
     # ----------------------------------------------------------------
     
