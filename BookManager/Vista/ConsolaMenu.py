@@ -1,10 +1,12 @@
 from BookManager.Controlador.AdministradorControlador import Administrador
 #from BookManager.Controlador.UsuarioControlador import Usuario
-
+from BookManager.Controlador.VentasControlador import VentasControlador
 
 
 class ConsolaMenu:
-    
+    def __init__(self):
+        self.controlador = VentasControlador()  # Inicializar el controlador
+
     def consolaLogin(self):
         
         global rol
@@ -102,8 +104,10 @@ class ConsolaMenu:
     
     # Opcion 3
     def verEstadisticas(self):
-        pass
-    
+        print("Generando reporte de estadísticas...")
+        self.controlador.generar_reporte_ventas()
+        print("Reporte generado exitosamente: 'reporte_ventas.pdf'")
+
     # Opcion 4
     def gestionarInventario(self):
         
