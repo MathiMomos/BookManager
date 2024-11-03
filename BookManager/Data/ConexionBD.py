@@ -1,13 +1,14 @@
 import sqlite3
+import os
 
 class ConexionBD:
     
-    def conexion_usuarios(self):
-        pass
-    
     #CONEXION A BD INVENTARIO.DB:
     def conexion_inventario(self):
-        conexion = sqlite3.connect("BookManager\\Data\\inventario.db")
+        BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+        db_path = os.path.join(BASE_DIR, "inventario.db")
+        conexion = sqlite3.connect(db_path)
+
         cursor = conexion.cursor()
         
         # Crear tabla productos si no existe
@@ -24,7 +25,10 @@ class ConexionBD:
         return conexion
     
     def conexion_ventas(self):
-        conexion = sqlite3.connect("BookManager\\Data\\ventas.db")
+        BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+        db_path = os.path.join(BASE_DIR, "ventas.db")
+        conexion = sqlite3.connect(db_path)
+        
         cursor = conexion.cursor()
 
         cursor.execute("""CREATE TABLE IF NOT EXISTS ventas (
@@ -40,12 +44,3 @@ class ConexionBD:
         return conexion
 
 # esto es para conectarse a la base de datos de ventas    
-objeto = ConexionBD()
-db = objeto.conexion_ventas()
-cursor = db.cursor()
-sql = "INSERT INTO ventas VALUES (?,?,?,?,?,?)"
-valores = (None, "CUADERNO", 240,1200,"27/10/2024","20:15")
-cursor.execute(sql,valores)
-db.commit()
-cursor.close()
-db.close()

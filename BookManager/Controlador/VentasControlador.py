@@ -17,8 +17,8 @@ class VentasControlador:
     
     def verHistorialDeVentas(self):
         #BD para historial de ventas
-        if historial.empty
-        print(f"Historial de ventas para '{vendedor}': {historial}")
+        if historial.empty:
+            print(f"Historial de ventas para '{vendedor}': {historial}")
 
     def generarTicket(self):
         print (f"Generando ticket en PDF para la venta ID {ventaID}")

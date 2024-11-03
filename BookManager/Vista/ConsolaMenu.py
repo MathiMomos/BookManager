@@ -1,16 +1,15 @@
-from BookManager.Controlador.AdministradorControlador import Administrador
-#from BookManager.Controlador.UsuarioControlador import Usuario
 from BookManager.Controlador.VentasControlador import VentasControlador
-#INTEGRACIÓN INVENTARIO CONTROLADOR:
-from BookManager.Controlador.InventarioControlador import InventarioControlador
+from BookManager.Controlador.VendedorControlador import VendedorControlador
+from BookManager.Controlador.AdministradorControlador import Administrador
+
 
 class ConsolaMenu:
+    
     def __init__(self):
-        self.controlador = VentasControlador()  # Inicializar el controlador
-
+        self.objetoVendedor = VendedorControlador()
+        self.objetoAdministrador = Administrador()
+    
     def consolaLogin(self):
-        
-        global rol
         
         while(True):
             print("Iniciar sesion")
@@ -23,9 +22,6 @@ class ConsolaMenu:
             rol = input("Ingresa tu rol: ")
             contra_bd = "admin123"
                 
-            
-            
-            
             if contrasenia == contra_bd and rol == "administrador" :
                 print("Bienvenido Administrador (Nombre)")
                 break
@@ -42,54 +38,8 @@ class ConsolaMenu:
             self.menuVendedor()
         else:
             print("Rol no existe")
+
     
-    #INVENTARIO CONTROLADOR:
-    def __init__(self):
-        self.controlador_inventario = InventarioControlador()  # Inicializar controlador de inventario
-
-    def gestionarInventario(self):
-        while(True):
-            print("1. Agregar producto")
-            print("2. Eliminar producto")
-            print("3. Modificar producto")
-            print("4. Buscar producto")
-            print("0. Volver")
-            try:
-                opcion = int(input("Ingrese su opcion: "))
-            except ValueError as error:
-                print(f"Opcion invalida. Error {error}")
-        
-            if opcion == 1:
-                self.agregarProducto()
-            elif opcion == 2:
-                self.eliminarProducto()
-            elif opcion == 3:
-                self.modificarProducto()
-            elif opcion == 4:
-                self.buscarProducto()
-            elif opcion == 0:
-                print("Volviendo")
-                break
-
-    def agregarProducto(self):
-        nombre = input("Nombre del producto: ")
-        cantidad = int(input("Cantidad: "))
-        precio = float(input("Precio: "))
-        descripcion = input("Descripción: ")
-        self.controlador_inventario.agregarProducto(nombre, cantidad, precio, descripcion)
-
-    def eliminarProducto(self):
-        nombre = input("Nombre del producto a eliminar: ")
-        self.controlador_inventario.eliminarProducto(nombre)
-
-    def modificarProducto(self):
-        nombre = input("Nombre del producto a modificar: ")
-        nueva_cantidad = int(input("Nueva cantidad: "))
-        self.controlador_inventario.modificarProducto(nombre, nueva_cantidad)
-
-    def buscarProducto(self):
-        nombre = input("Nombre del producto a buscar: ")
-        self.controlador_inventario.buscarProducto(nombre)
     
     # ----------------------------------------------------------------
     
@@ -97,6 +47,7 @@ class ConsolaMenu:
     
     def menuAdministrador(self):
         
+        global opcion
         while(True):
             print("1. Vender Producto")
             print("2. Ver historial de ventas")
@@ -142,58 +93,36 @@ class ConsolaMenu:
     
     # Opcion 1
     def venderProducto(self):
-        administrador = Administrador("Admin_1,", "Apellido_1")
-        administrador.venderProducto()
-    
+        self.objetoAdministrador.mostrar_productos()
+        id_producto = int(input("Ingrese el ID del producto: "))
+        cantidad = int(input("Ingrese la cantidad a vender: "))
+        self.objetoAdministrador.vender_producto(id_producto, cantidad)
+        
     # Opcion 2
     def verHistorialDeVentas(self):
-        pass
-    
+        print("===============Ventas================")
+        self.objetoAdministrador.ver_historial_ventas()
+        
     # Opcion 3
     def verEstadisticas(self):
         print("Generando reporte de estadísticas...")
-        self.controlador.generar_reporte_ventas()
+        
+        objetoVentasControlador = VentasControlador()
+        objetoVentasControlador.generar_reporte_ventas()
+        
         print("Reporte generado exitosamente: 'reporte_ventas.pdf'")
 
     # Opcion 4
     def gestionarInventario(self):
-        
-        while(True):
-            print("1. Agregar producto")
-            print("2. Eliminar producto")
-            print("3. Modificar producto")
-            print("4. Buscar producto")
-            print("0. Volver")
-            try:
-                opcion = int(input("Ingrese su opcion: "))
-            except ValueError as error:
-                print(f"Opcion invalida. Error {error}")
-        
-            if opcion == 1:
-                self.agregarProducto()
-            elif opcion == 2:
-                self.eliminarProducto()
-            elif opcion == 3:
-                self.modificarProducto()
-            elif opcion == 4:
-                self.buscarProducto()
-            elif opcion == 0:
-                print("Volviendo")
-                break
-        
-    # Opcion 4.1
-    def agregarProducto(self):
-        print("Agregar producto")
-    def eliminarProducto(self):
-        print("Eliminar producto")
-    def modificarProducto(self):
-        print("Modificar producto")
-    def buscarProducto(self):
-        print("Buscar producto")
+        self.objetoAdministrador.gestionarInventario()
     
     # Opcion 5
     def verDisponibilidad(self):
-        pass
+        id_producto = int(input("Ingrese el ID del producto: "))
+        producto = self.objetoAdministrador.ver_disponibilidad(id_producto)
+        idex,cantidad,precio,nombre = producto
+        
+        print(f"El producto {nombre} cuenta con {cantidad} unidade(s)")
     
     # Opcion 6
     def reembolso(self):
@@ -207,6 +136,7 @@ class ConsolaMenu:
     # Vendedor
     
     def menuVendedor(self):
+        global opcion
         while(True):
             print("1. Vender Producto")
             print("2. Ver historial de ventas")
@@ -214,13 +144,14 @@ class ConsolaMenu:
             print("4. Reembolso")
             print("0. Salir")
             try:
+
                 opcion = int(input("Digite una opcion: "))
             except ValueError as error:
                 print(f"Error... Ingresa un numero: {error}")
             
             if opcion == 1:
                 print("Vender producto")
-                self.venderProducto()
+                self.venderProductoVendedor()
             elif opcion == 2:
                 print("Ver historial de ventas")
                 self.verHistorialDeVentas()
@@ -238,5 +169,22 @@ class ConsolaMenu:
                 
         # menu con while
         
-    
-    
+    def venderProductoVendedor(self):
+        
+        self.objetoVendedor.mostrar_productos()
+        id_producto = int(input("Ingrese el ID del producto: "))
+        cantidad = int(input("Ingrese la cantidad a vender: "))
+        
+        self.objetoVendedor.vender_producto(id_producto, cantidad)
+
+    def verHistorialVendedor(self):
+        print("===============Ventas================")
+        self.objetoVendedor.ver_historial_ventas()
+
+    def verDisponibilidadVendedor(self):
+        id_producto = int(input("Ingrese el ID del producto: "))
+        self.objetoVendedor.ver_disponibilidad(id_producto)
+
+
+
+        
