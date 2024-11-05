@@ -2,11 +2,11 @@ import os
 import tkinter as tk
 from tkinter import ttk, font
 from PIL import Image, ImageTk
-from InicioVendedor import InicioVendedor
-from InventarioVendedor import InventarioVendedor
-from HistorialVendedor import HistorialVendedor
+from BookManager.BookManager.Vista.Vendedor.InicioVendedor import InicioVendedor
+from BookManager.BookManager.Vista.Vendedor.InventarioVendedor import InventarioVendedor
+from BookManager.BookManager.Vista.Vendedor.HistorialVendedor import HistorialVendedor
 
-class Vender(tk.Tk):
+class Vender(tk.Toplevel):
     def __init__(self):
         super().__init__()
         self.title("Librería La Hoja - Vender")
@@ -108,8 +108,8 @@ class Vender(tk.Tk):
         self.frames["Historial de ventas"] = HistorialVendedor(self.main_frame)
         self.frames["Ver inventario"] = InventarioVendedor(self.main_frame)
 
-        # Mostrar la pestaña "Vender" al inicio
-        self.cambiar_pestaña("Vender")
+        # Mostrar la pestaña "Inicio" al inicio
+        self.cambiar_pestaña("Inicio")
 
     def cambiar_pestaña(self, pestaña):
         # Ocultar todos los frames
@@ -130,81 +130,7 @@ class Vender(tk.Tk):
     def create_vender_frame(self, parent):
         frame = tk.Frame(parent, bg="white")
 
-        # Barra de búsqueda con diseño redondeado
-        search_frame = tk.Frame(frame, bg="white")
-        search_frame.pack(fill="x", pady=(0, 10))
-
-        canvas = tk.Canvas(search_frame, width=500, height=50, bg="white", highlightthickness=0)
-        canvas.pack(fill="x", expand=True)
-
-        # Llamar a la función para crear un rectángulo redondeado
-        self.create_rounded_rectangle(canvas, 10, 10, 490, 40, radius=15, fill="#E6E6FA", outline="black")
-
-        # Cargar el icono de búsqueda
-        self.search_icon = ImageTk.PhotoImage(Image.open(os.path.join(self.base_dir, "iconos", "lupa.png")).resize((24, 24)))
-        canvas.create_image(30, 25, image=self.search_icon, anchor="center")
-
-        # Crear el cuadro de entrada
-        search_entry = tk.Entry(search_frame, font=("Arial", 12), bd=0, bg="#E6E6FA", fg="grey", width=40)
-        search_entry.insert(0, "Ingresa el ID del producto")
-
-        def on_entry_click(event):
-            if search_entry.get() == "Ingresa el ID del producto":
-                search_entry.delete(0, "end")
-                search_entry.config(fg="black")
-
-        search_entry.bind("<FocusIn>", on_entry_click)
-        canvas.create_window(250, 25, window=search_entry)
-
-        # Tabla de productos con más columnas
-        columns = ("#", "Descripción", "Cantidad", "Precio", "Total", "Acciones")
-        tree = ttk.Treeview(frame, columns=columns, show="headings", height=8)
-        tree.pack(fill="both", expand=True)
-
-        # Cambiar fuente y tamaño de las columnas
-        style = ttk.Style()
-        style.configure("Treeview.Heading", font=("Arial", 14, "bold"))
-        style.configure("Treeview", font=("Arial", 12))
-
-        for col in columns:
-            tree.heading(col, text=col)
-            tree.column(col, anchor="center", width=120)
-
-        # Datos de ejemplo
-        productos = [
-            ("1", "Cuaderno", "10", "S/. 5", "S/. 50"),
-            ("2", "Lapicero", "10", "S/. 1", "S/. 10"),
-            ("3", "Plumones", "2", "S/. 4.50", "S/. 9"),
-        ]
-        for producto in productos:
-            tree.insert("", "end", values=producto)
-
-        # Aumentar el alto de las filas
-        style.configure("Treeview", rowheight=30)
-
-        # Botón de confirmación
-        confirm_frame = tk.Frame(frame, bg="white")
-        confirm_frame.pack(fill="x", pady=10)
-
-        carrito_button = tk.Button(
-            confirm_frame,
-            text="Carrito de compras",
-            image=self.icons.get("Carrito"),
-            compound="left",
-            bg=self.default_menu_color,
-            relief="flat",
-            anchor="w",
-            padx=10,
-            font=self.menu_font
-        )
-        carrito_button.pack(side="left", padx=10)
-
-        confirm_button = tk.Button(
-            confirm_frame, text="Confirmar compra y generar ticket",
-            bg="green", fg="white", padx=10, pady=5,
-            font=("Arial", 12)
-        )
-        confirm_button.pack(side="right")
+        # Aquí va el contenido del frame de "Vender"
 
         return frame
 
@@ -220,8 +146,3 @@ class Vender(tk.Tk):
             x1, y1 + radius, x1, y1
         ]
         return canvas.create_polygon(points, smooth=True, **kwargs)
-
-# Prueba la interfaz
-if __name__ == "__main__":
-    app = Vender()
-    app.mainloop()
