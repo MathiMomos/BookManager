@@ -1,3 +1,4 @@
+import os
 from tkinter import Tk, StringVar
 from tkinter import ttk
 from BookManager.BookManager.Vista.Vendedor.Vender import Vender
@@ -35,6 +36,7 @@ class Login(Tk):
         if self.validar_credenciales(username, password, role):
             self.withdraw()  # Oculta la ventana de Login en lugar de destruirla
             if role == "admin":
+                # Parte de Luis (Administrador)
                 print("Administrador")
             elif role == "usuario":
                 self.abrir_interfaz_vendedor()
@@ -42,8 +44,13 @@ class Login(Tk):
                 print("Rol no válido")
 
     def validar_credenciales(self, username, password, role):
+        # Obtener la ruta de la base de datos
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        db_ruta = os.path.join(base_dir, "..", "Data", "users.db")
+
         # Conexión a la base de datos
-        conexion = sqlite3.connect(r'C:\Users\USER\PortafolioUNMSM\Estructura de datos\Proyecto\BookManager\BookManager\Data\users.db')
+        #conexion = sqlite3.connect(r'C:\Users\USER\PortafolioUNMSM\Estructura de datos\Proyecto\BookManager\BookManager\Data\users.db')
+        conexion = sqlite3.connect(db_ruta)
         cursor = conexion.cursor() #Para poder ejecutar los comandos
 
         # Consulta a la base de datos
