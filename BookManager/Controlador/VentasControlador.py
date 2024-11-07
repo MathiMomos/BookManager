@@ -6,9 +6,6 @@ class VentasControlador:
     def __init__(self):
         self.modelo = ModeloVentas()
 
-    #def __init__(self):
-    #una vez ya conectado con la BD para Producto
-
     def generarTicket(self):
         print (f"Generando ticket en PDF para la venta ID {ventaID}")
         #implementar logica del pdf
