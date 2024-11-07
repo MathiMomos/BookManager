@@ -5,7 +5,6 @@ class ModeloVentas:
     def __init__(self, db_path='ventas.db'):
         self.conexion = sqlite3.connect(db_path)
 
-    # Parte de la estadistica
     def obtener_ventas_diarias(self):
         cursor = self.conexion.cursor()
         query = """
@@ -24,6 +23,7 @@ class ModeloVentas:
                 ventas_diarias[fecha] = 0  # Inicializar la fecha en el diccionario
             ventas_diarias[fecha] += precio * cantidad  # Sumar el total para la fecha
         # Convertir el diccionario a una lista ordenada de tuplas (fecha, total_ventas)
+        # Eficiencia
         ventas_ordenadas = sorted(ventas_diarias.items())
         return ventas_ordenadas
 
@@ -44,9 +44,9 @@ class ModeloVentas:
             # Convertir la fecha a un objeto datetime y formatear el mes como 'YYYY-MM'
             fecha = datetime.datetime.strptime(fecha_str, '%Y-%m-%d')
             mes = fecha.strftime('%Y-%m')
-            # Inicializar la clave del mes si no existe en el diccionario
+            # Inicializar la clave del mes
             if mes not in ventas_mensuales:
-                ventas_mensuales[mes] = 0  # Inicializar el mes en el diccionario
+                ventas_mensuales[mes] = 0
             # Sumar el total de ventas al mes correspondiente
             ventas_mensuales[mes] += precio * cantidad
         # Convertir el diccionario a una lista ordenada de tuplas (mes, total_ventas)
