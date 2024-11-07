@@ -1,4 +1,4 @@
-from BookManager.Data.ConexionBD import ConexionBD
+from BookManager.BookManager.Data.ConexionBD import ConexionBD
 
 class VendedorControlador:
     
@@ -15,19 +15,21 @@ class VendedorControlador:
         cursor.close()
         conexion.close()
 
-        if inventario:
-            print("ID |         Nombre          | Cantidad | Precio")
-            print("=" * 50)
-            for producto in inventario:
-                print(f"{producto[0]} |         {producto[1]}         | {producto[2]} | {producto[3]}")
-        else:
-            print("No hay ningun producto en el inventario")
+        return inventario if inventario else [] # Para la interfaz grafica
+
+        #if inventario:
+        #    print("ID |         Nombre          | Cantidad | Precio")
+        #    print("=" * 50)
+        #    for producto in inventario:
+        #        print(f"{producto[0]} |         {producto[1]}         | {producto[2]} | {producto[3]}")
+        #else:
+        #    print("No hay ningun producto en el inventario")
 
     def ver_disponibilidad(self, id_producto):
         conexion = self.conexion_bd.conexion_inventario()
         cursor = conexion.cursor()
 
-        cursor.execute("SELECT cantidad, precio, nombre FROM productos WHERE idProducto = ?", (id_producto,))
+        cursor.execute("SELECT cantidad, precio, nombre FROM inventario WHERE idProducto = ?", (id_producto,)) # No existia tabla productos
         producto = cursor.fetchone()
         
         cursor.close()
