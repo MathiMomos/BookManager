@@ -158,7 +158,7 @@ class Vender(tk.Toplevel):
         canvas.create_window(250, 25, window=search_entry)
 
         # Tabla de productos con más columnas
-        columns = ("#", "Descripción", "Cantidad", "Precio", "Total", "Acciones")
+        columns = ("#", "Descripción", "Cantidad", "Precio", "Total", "Unidades")
         tree = ttk.Treeview(frame, columns=columns, show="headings", height=8)
         tree.pack(fill="both", expand=True)
 
