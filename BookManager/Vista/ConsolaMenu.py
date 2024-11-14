@@ -185,6 +185,12 @@ class ConsolaMenu:
         id_producto = int(input("Ingrese el ID del producto: "))
         self.objetoVendedor.ver_disponibilidad(id_producto)
 
+    def reembolsarVendedor(self):
+        self.verHistorialVendedor()
+        id_venta = int(input("Ingrese la ID de la venta realizada a reembolsar para añadir a la cola"))
+        self.objetoVendedor.solicitar_reembolso(id_venta)
+        self.objetoVendedor.realizar_reembolso()
+
 
 
         

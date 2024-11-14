@@ -2,9 +2,9 @@ import os
 import tkinter as tk
 from tkinter import ttk, font
 from PIL import Image, ImageTk
-from BookManager.BookManager.Vista.Vendedor.InicioVendedor import InicioVendedor
-from BookManager.BookManager.Vista.Vendedor.InventarioVendedor import InventarioVendedor
-from BookManager.BookManager.Vista.Vendedor.HistorialVendedor import HistorialVendedor
+from BookManager.Vista.Vendedor.InicioVendedor import InicioVendedor
+from BookManager.Vista.Vendedor.InventarioVendedor import InventarioVendedor
+from BookManager.Vista.Vendedor.HistorialVendedor import HistorialVendedor
 
 class Vender(tk.Toplevel):
     def __init__(self):
