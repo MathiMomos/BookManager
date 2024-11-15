@@ -5,7 +5,8 @@ from PIL import Image, ImageTk
 from BookManager.BookManager.Vista.Vendedor.InicioVendedor import InicioVendedor
 from BookManager.BookManager.Vista.Vendedor.InventarioVendedor import InventarioVendedor
 from BookManager.BookManager.Vista.Vendedor.HistorialVendedor import HistorialVendedor
-
+from BookManager.BookManager.Vista.Vendedor.CarritoCompra import CarritoCompra
+import threading
 
 class Vender(tk.Toplevel):
     def __init__(self):
@@ -164,19 +165,35 @@ class Vender(tk.Toplevel):
         search_entry.bind("<FocusIn>", on_entry_click)
         canvas.create_window(250, 25, window=search_entry)
 
+        # Entry para cantidad a vender
+        cantidad_frame = tk.Frame(frame, bg="white")
+        cantidad_frame.pack(fill="x", pady=5)
+        self.cantidad_label = tk.Label(cantidad_frame, text="Cantidad a vender:", font=("Arial", 12), bg="white")
+        self.cantidad_label.pack(side="left", padx=10)
+        self.cantidad_entry = tk.Entry(cantidad_frame, font=("Arial", 12), width=10)
+        self.cantidad_entry.pack(side="left", padx=10)
+
         # Tabla de productos con más columnas
-        columns = ("#", "Descripción", "Cantidad", "Precio", "Total", "Unidades")
-        tree = ttk.Treeview(frame, columns=columns, show="headings", height=8)
-        tree.pack(fill="both", expand=True)
+        columns = ("#", "Descripción", "Cantidad", "Precio", "Total")
+        self.tree = ttk.Treeview(frame, columns=columns, show="headings", height=8, selectmode="browse")
+        self.tree.pack(fill="both", expand=True)
+
+        # Configurar columnas
+        self.tree.heading("#", text="#")
+        self.tree.column("#", anchor="center", width=50)
+        self.tree.heading("Descripción", text="Descripción")
+        self.tree.column("Descripción", anchor="center", width=150)
+        self.tree.heading("Cantidad", text="Cantidad")
+        self.tree.column("Cantidad", anchor="center", width=100)
+        self.tree.heading("Precio", text="Precio")
+        self.tree.column("Precio", anchor="center", width=100)
+        self.tree.heading("Total", text="Total")
+        self.tree.column("Total", anchor="center", width=100)
 
         # Cambiar fuente y tamaño de las columnas
         style = ttk.Style()
         style.configure("Treeview.Heading", font=("Arial", 14, "bold"))
         style.configure("Treeview", font=("Arial", 12))
-
-        for col in columns:
-            tree.heading(col, text=col)
-            tree.column(col, anchor="center", width=120)
 
         # Datos de ejemplo
         productos = [
@@ -185,7 +202,7 @@ class Vender(tk.Toplevel):
             ("3", "Plumones", "2", "S/. 4.50", "S/. 9"),
         ]
         for producto in productos:
-            tree.insert("", "end", values=producto)
+            self.tree.insert("", "end", values=producto)
 
         # Aumentar el alto de las filas
         style.configure("Treeview", rowheight=30)
@@ -203,18 +220,72 @@ class Vender(tk.Toplevel):
             relief="flat",
             anchor="w",
             padx=10,
-            font=self.menu_font
+            font=self.menu_font,
+            command=self.abrir_carrito_compras
         )
         carrito_button.pack(side="left", padx=10)
 
         confirm_button = tk.Button(
             confirm_frame, text="Confirmar compra y generar ticket",
             bg="green", fg="white", padx=10, pady=5,
-            font=("Arial", 12)
+            font=("Arial", 12),
+            command=self.confirmar_compra
         )
         confirm_button.pack(side="right")
 
         return frame
+
+    def confirmar_compra(self):
+        # Obtener el producto seleccionado
+        selected_item = self.tree.selection()
+        if not selected_item:
+            tk.messagebox.showwarning("Advertencia", "Por favor, selecciona un producto de la tabla.")
+            return
+
+        # Obtener la cantidad ingresada
+        cantidad = self.cantidad_entry.get()
+        if not cantidad.isdigit() or int(cantidad) <= 0:
+            tk.messagebox.showwarning("Advertencia", "Por favor, ingresa una cantidad válida.")
+            return
+
+        # Obtener los datos del producto seleccionado
+        producto = self.tree.item(selected_item, "values")
+        descripcion = producto[1]
+        precio = producto[3]
+        total = int(cantidad) * float(precio.split("/."))[1]
+
+        # Mostrar ventana emergente
+        ventana_emergente = tk.Toplevel(self)
+        ventana_emergente.title("Venta generada")
+        ventana_emergente.geometry("300x150")
+        ventana_emergente.transient(self)
+        ventana_emergente.grab_set()
+        ventana_emergente.configure(bg="white")
+        screen_width = self.winfo_screenwidth()
+        screen_height = self.winfo_screenheight()
+        position_x = int((screen_width - 300) / 2)
+        position_y = int((screen_height - 150) / 2)
+        ventana_emergente.geometry(f"300x150+{position_x}+{position_y}")
+
+        # Icono y mensaje
+        icon_path = os.path.join(self.base_dir, "iconos", "comprobado.png")
+        icon = ImageTk.PhotoImage(Image.open(icon_path).resize((50, 50)))
+        tk.Label(ventana_emergente, image=icon, bg="white").pack(pady=10)
+        tk.Label(ventana_emergente, text="Venta generada", font=("Arial", 14), bg="white").pack()
+
+        # Mantener referencia del icono
+        ventana_emergente.icon = icon
+
+        # Cerrar ventana emergente después de 3 segundos
+        def cerrar_ventana():
+            ventana_emergente.destroy()
+
+        self.after(3000, cerrar_ventana)
+
+    def abrir_carrito_compras(self):
+        carrito = CarritoCompra(self)
+        carrito.grab_set()  # Hacer la ventana modal
+        carrito.mainloop()
 
     def create_rounded_rectangle(self, canvas, x1, y1, x2, y2, radius=25, **kwargs):
         """Función para crear un rectángulo con bordes redondeados en el canvas."""
