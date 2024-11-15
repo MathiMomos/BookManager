@@ -5,6 +5,7 @@ from PIL import Image, ImageTk
 
 class CarritoCompra(tk.Toplevel):
     def __init__(self, parent):
+        self.parent = parent
         super().__init__(parent)
         self.title("Carrito de compras")
         self.geometry("400x450")
@@ -62,7 +63,7 @@ class CarritoCompra(tk.Toplevel):
         eliminar_button.pack(pady=5)
 
         # Botón para cerrar la ventana
-        cerrar_button = tk.Button(self, text="Guardar cambios", command=self.destroy, bg="#FFA07A", fg="black",
+        cerrar_button = tk.Button(self, text="Guardar cambios", command=self.guardar_cambios, bg="#FFA07A", fg="black",
                                   font=("Arial", 12))
         cerrar_button.pack(pady=10)
 
@@ -71,3 +72,11 @@ class CarritoCompra(tk.Toplevel):
         if selected_item:
             self.tree.delete(selected_item)  # Eliminar la fila seleccionada
 
+    def guardar_cambios(self):
+        # Actualizar la lista del carrito en la ventana principal
+        self.parent.carrito_compras = []
+        for item in self.tree.get_children():
+            values = self.tree.item(item, 'values')
+            producto, unidades, total = values
+            self.parent.carrito_compras.append((producto, int(unidades), total))
+        self.destroy()  # Eliminar la fila seleccionada

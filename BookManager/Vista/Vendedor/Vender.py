@@ -267,57 +267,60 @@ class Vender(tk.Toplevel):
         tk.messagebox.showinfo("Producto agregado", f"{cantidad} unidades de '{descripcion}' agregado al carrito.")
 
     def confirmar_compra(self):
-        # Obtener el producto seleccionado
-        selected_item = self.tree.selection()
-        if not selected_item:
-            tk.messagebox.showwarning("Advertencia", "Por favor, selecciona un producto de la tabla.")
+        if not self.carrito_compras:
+            tk.messagebox.showwarning("Advertencia", "El carrito de compras está vacío.")
             return
 
-        # Obtener la cantidad ingresada
-        cantidad = self.cantidad_entry.get()
-        if not cantidad.isdigit() or int(cantidad) <= 0:
-            tk.messagebox.showwarning("Advertencia", "Por favor, ingresa una cantidad válida.")
-            return
+        for producto in self.carrito_compras:
+            descripcion, cantidad, total = producto
+            id_producto = self.obtener_id_producto(descripcion)
+            if id_producto is None:
+                tk.messagebox.showwarning("Error", f"No se encontró el producto '{descripcion}' en el inventario.")
+                continue
 
-        # Obtener los datos del producto seleccionado
-        producto = self.tree.item(selected_item, "values")
-        id_producto = producto[0]
-        descripcion = producto[1]
-        cantidad = int(cantidad)
+            cantidad = int(cantidad)
 
-        # Llamar a la función vender_producto del controlador
-        venta_exitosa = self.vendedor_controlador.vender_producto(id_producto, cantidad)
+            # Llamar a la función vender_producto del controlador
+            venta_exitosa = self.vendedor_controlador.vender_producto(id_producto, cantidad)
 
-        if venta_exitosa:
-            # Mostrar ventana emergente
-            ventana_emergente = tk.Toplevel(self)
-            ventana_emergente.title("Venta generada")
-            ventana_emergente.geometry("300x150")
-            ventana_emergente.transient(self)
-            ventana_emergente.grab_set()
-            ventana_emergente.configure(bg="white")
-            screen_width = self.winfo_screenwidth()
-            screen_height = self.winfo_screenheight()
-            position_x = int((screen_width - 300) / 2)
-            position_y = int((screen_height - 150) / 2)
-            ventana_emergente.geometry(f"300x150+{position_x}+{position_y}")
+            if venta_exitosa:
+                # Mostrar ventana emergente
+                ventana_emergente = tk.Toplevel(self)
+                ventana_emergente.title("Venta generada")
+                ventana_emergente.geometry("300x150")
+                ventana_emergente.transient(self)
+                ventana_emergente.grab_set()
+                ventana_emergente.configure(bg="white")
+                screen_width = self.winfo_screenwidth()
+                screen_height = self.winfo_screenheight()
+                position_x = int((screen_width - 300) / 2)
+                position_y = int((screen_height - 150) / 2)
+                ventana_emergente.geometry(f"300x150+{position_x}+{position_y}")
 
-            # Icono y mensaje
-            icon_path = os.path.join(self.base_dir, "iconos", "comprobado.png")
-            icon = ImageTk.PhotoImage(Image.open(icon_path).resize((50, 50)))
-            tk.Label(ventana_emergente, image=icon, bg="white").pack(pady=10)
-            tk.Label(ventana_emergente, text="Venta generada", font=("Arial", 14), bg="white").pack()
+                # Icono y mensaje
+                icon_path = os.path.join(self.base_dir, "iconos", "comprobado.png")
+                icon = ImageTk.PhotoImage(Image.open(icon_path).resize((50, 50)))
+                tk.Label(ventana_emergente, image=icon, bg="white").pack(pady=10)
+                tk.Label(ventana_emergente, text="Venta generada", font=("Arial", 14), bg="white").pack()
 
-            # Mantener referencia del icono
-            ventana_emergente.icon = icon
+                # Mantener referencia del icono
+                ventana_emergente.icon = icon
 
-            # Cerrar ventana emergente después de 3 segundos
-            def cerrar_ventana():
-                ventana_emergente.destroy()
+                # Cerrar ventana emergente después de 3 segundos
+                def cerrar_ventana():
+                    ventana_emergente.destroy()
 
-            self.after(3000, cerrar_ventana)
-        else:
-            tk.messagebox.showwarning("Error", "No se pudo realizar la venta. Verifica el stock disponible.")
+                self.after(3000, cerrar_ventana)
+            else:
+                tk.messagebox.showwarning("Error", f"No se pudo realizar la venta del producto '{descripcion}'. Verifica el stock disponible.")
+
+    def obtener_id_producto(self, descripcion):
+        # Buscar el producto en la tabla de productos para obtener su ID
+        for item in self.tree.get_children():
+            producto = self.tree.item(item, "values")
+            if producto[1] == descripcion:
+                return producto[0]
+        return None
 
     def abrir_carrito_compras(self):
         carrito = CarritoCompra(self)
@@ -358,3 +361,4 @@ class Vender(tk.Toplevel):
             id_producto, nombre, cantidad, precio = producto
             total = cantidad * float(precio)
             self.tree.insert("", "end", values=(id_producto, nombre, cantidad, f"S/. {precio}", f"S/. {total}"))
+
