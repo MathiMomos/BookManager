@@ -11,15 +11,15 @@ class InicioVendedor(tk.Frame):
         self.base_dir = os.path.dirname(os.path.abspath(__file__))
 
         # Crear el marco principal para organizar los widgets
-        main_frame = tk.Frame(self, bg="#f0f2fa")
-        main_frame.pack(expand=True, padx=10, pady=10)
+        marco_principal = tk.Frame(self, bg="#f0f2fa")
+        marco_principal.pack(expand=True, padx=10, pady=10)
 
         # Crear los tres paneles de opciones con rutas absolutas
-        self.create_option_panel(main_frame, "Vender producto", os.path.join(self.base_dir, "iconos", "vender.png"), 0, 0, columnspan=2)
-        self.create_option_panel(main_frame, "Ver inventario", os.path.join(self.base_dir, "iconos", "inventario.png"), 1, 0)
-        self.create_option_panel(main_frame, "Ver historial de ventas", os.path.join(self.base_dir, "iconos", "documentos.png"), 1, 1)
+        self.crear_panel_opcion(marco_principal, "Vender producto", os.path.join(self.base_dir, "iconos", "vender.png"), 0, 0, columnspan=2)
+        self.crear_panel_opcion(marco_principal, "Ver inventario", os.path.join(self.base_dir, "iconos", "inventario.png"), 1, 0)
+        self.crear_panel_opcion(marco_principal, "Ver historial de ventas", os.path.join(self.base_dir, "iconos", "documentos.png"), 1, 1)
 
-    def create_option_panel(self, parent, text, icon_path, row, column, columnspan=1):
+    def crear_panel_opcion(self, parent, text, icon_path, row, column, columnspan=1):
         # Crear marco para cada opción con un tamaño mayor
         option_frame = tk.Frame(parent, bg="#dfe1e8", width=300, height=180)  # Aumenta el tamaño del marco
         option_frame.grid(row=row, column=column, columnspan=columnspan, padx=15, pady=15, sticky="nsew")

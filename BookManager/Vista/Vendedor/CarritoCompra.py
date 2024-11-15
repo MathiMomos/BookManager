@@ -14,11 +14,11 @@ class CarritoCompra(tk.Toplevel):
         self.transient(parent)
         self.grab_set()
         self.configure(bg="white")
-        screen_width = self.winfo_screenwidth()
-        screen_height = self.winfo_screenheight()
-        position_x = int((screen_width - 400) / 2)
-        position_y = int((screen_height - 450) / 2)
-        self.geometry(f"400x450+{position_x}+{position_y}")
+        ancho_pantalla = self.winfo_screenwidth()
+        alto_pantalla = self.winfo_screenheight()
+        posicion_x = int((ancho_pantalla - 400) / 2)
+        posicion_y = int((alto_pantalla - 450) / 2)
+        self.geometry(f"400x450+{posicion_x}+{posicion_y}")
 
         # Icono del carrito de compras
         self.icon_path = "Vendedor/iconos/carrito-de-compras.png"

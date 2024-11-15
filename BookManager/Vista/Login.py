@@ -11,7 +11,7 @@ class Login(Tk):
         super().__init__()
         self.title("Login")
         self.geometry("400x300")
-        self.center_window()
+        self.centrar_ventana()
 
         ttk.Label(self, text="Usuario:").pack(pady=5)
         self.entrada_usuario = ttk.Entry(self)
@@ -23,7 +23,7 @@ class Login(Tk):
 
         ttk.Button(self, text="Login", command=self.login).pack(pady=20)
 
-    def center_window(self):
+    def centrar_ventana(self):
         self.update_idletasks()
         width = self.winfo_width()
         height = self.winfo_height()
