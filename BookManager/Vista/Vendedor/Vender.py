@@ -6,6 +6,7 @@ from BookManager.BookManager.Vista.Vendedor.InicioVendedor import InicioVendedor
 from BookManager.BookManager.Vista.Vendedor.InventarioVendedor import InventarioVendedor
 from BookManager.BookManager.Vista.Vendedor.HistorialVendedor import HistorialVendedor
 
+
 class Vender(tk.Toplevel):
     def __init__(self):
         super().__init__()
@@ -93,7 +94,7 @@ class Vender(tk.Toplevel):
             anchor="w",
             padx=10,
             font=self.menu_font,
-            command=self.quit
+            command=self.volver_a_login
         )
         salir_button.pack(side="bottom", fill="x", pady=5, ipady=5)
 
@@ -126,6 +127,12 @@ class Vender(tk.Toplevel):
         # Cambiar el color de la pestaña activa
         if pestaña in self.menu_buttons:
             self.menu_buttons[pestaña].config(bg=self.active_menu_color)
+
+    def volver_a_login(self):
+        self.destroy()  # Cierra la ventana actual
+        from BookManager.BookManager.Vista.Login import Login  # Importación diferida para evitar circularidad
+        login_app = Login()  # Crea una nueva instancia de Login
+        login_app.mainloop()  # Muestra la ventana de Login
 
     def create_vender_frame(self, parent):
         frame = tk.Frame(parent, bg="white")
