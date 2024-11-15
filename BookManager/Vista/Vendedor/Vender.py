@@ -115,6 +115,7 @@ class Vender(tk.Toplevel):
 
         # Inicializar controlador
         self.vendedor_controlador = VendedorControlador()
+        self.carrito_compras = []  # Lista para almacenar los productos seleccionados para el carrito
         self.mostrar_productos()
 
     def cambiar_pestaña(self, pestaña):
@@ -202,12 +203,24 @@ class Vender(tk.Toplevel):
         # Aumentar el alto de las filas
         style.configure("Treeview", rowheight=30)
 
-        # Botón de confirmación
-        confirm_frame = tk.Frame(frame, bg="white")
-        confirm_frame.pack(fill="x", pady=10)
+        # Botones de acción
+        action_frame = tk.Frame(frame, bg="white")
+        action_frame.pack(fill="x", pady=10)
+
+        agregar_carrito_button = tk.Button(
+            action_frame,
+            text="Agregar a carrito",
+            bg="#FFA500",
+            fg="white",
+            padx=10,
+            pady=5,
+            font=("Arial", 12),
+            command=self.agregar_a_carrito
+        )
+        agregar_carrito_button.pack(side="left", padx=10)
 
         carrito_button = tk.Button(
-            confirm_frame,
+            action_frame,
             text="Carrito de compras",
             image=self.icons.get("Carrito"),
             compound="left",
@@ -221,7 +234,7 @@ class Vender(tk.Toplevel):
         carrito_button.pack(side="left", padx=10)
 
         confirm_button = tk.Button(
-            confirm_frame, text="Confirmar compra y generar ticket",
+            action_frame, text="Confirmar compra y generar ticket",
             bg="green", fg="white", padx=10, pady=5,
             font=("Arial", 12),
             command=self.confirmar_compra
@@ -229,6 +242,29 @@ class Vender(tk.Toplevel):
         confirm_button.pack(side="right")
 
         return frame
+
+    def agregar_a_carrito(self):
+        # Obtener el producto seleccionado
+        selected_item = self.tree.selection()
+        if not selected_item:
+            tk.messagebox.showwarning("Advertencia", "Por favor, selecciona un producto de la tabla.")
+            return
+
+        # Obtener la cantidad ingresada
+        cantidad = self.cantidad_entry.get()
+        if not cantidad.isdigit() or int(cantidad) <= 0:
+            tk.messagebox.showwarning("Advertencia", "Por favor, ingresa una cantidad válida.")
+            return
+
+        # Obtener los datos del producto seleccionado
+        producto = self.tree.item(selected_item, "values")
+        descripcion = producto[1]
+        precio = float(producto[3].replace('S/. ', '').strip())
+        total = int(cantidad) * precio
+
+        # Añadir el producto al carrito de compras
+        self.carrito_compras.append((descripcion, cantidad, f"S/. {total:.2f}"))
+        tk.messagebox.showinfo("Producto agregado", f"{cantidad} unidades de '{descripcion}' agregado al carrito.")
 
     def confirmar_compra(self):
         # Obtener el producto seleccionado
@@ -245,40 +281,54 @@ class Vender(tk.Toplevel):
 
         # Obtener los datos del producto seleccionado
         producto = self.tree.item(selected_item, "values")
+        id_producto = producto[0]
         descripcion = producto[1]
-        precio = producto[3]
-        total = int(cantidad) * float(precio.split("/.")[1])
+        cantidad = int(cantidad)
 
-        # Mostrar ventana emergente
-        ventana_emergente = tk.Toplevel(self)
-        ventana_emergente.title("Venta generada")
-        ventana_emergente.geometry("300x150")
-        ventana_emergente.transient(self)
-        ventana_emergente.grab_set()
-        ventana_emergente.configure(bg="white")
-        screen_width = self.winfo_screenwidth()
-        screen_height = self.winfo_screenheight()
-        position_x = int((screen_width - 300) / 2)
-        position_y = int((screen_height - 150) / 2)
-        ventana_emergente.geometry(f"300x150+{position_x}+{position_y}")
+        # Llamar a la función vender_producto del controlador
+        venta_exitosa = self.vendedor_controlador.vender_producto(id_producto, cantidad)
 
-        # Icono y mensaje
-        icon_path = os.path.join(self.base_dir, "iconos", "comprobado.png")
-        icon = ImageTk.PhotoImage(Image.open(icon_path).resize((50, 50)))
-        tk.Label(ventana_emergente, image=icon, bg="white").pack(pady=10)
-        tk.Label(ventana_emergente, text="Venta generada", font=("Arial", 14), bg="white").pack()
+        if venta_exitosa:
+            # Mostrar ventana emergente
+            ventana_emergente = tk.Toplevel(self)
+            ventana_emergente.title("Venta generada")
+            ventana_emergente.geometry("300x150")
+            ventana_emergente.transient(self)
+            ventana_emergente.grab_set()
+            ventana_emergente.configure(bg="white")
+            screen_width = self.winfo_screenwidth()
+            screen_height = self.winfo_screenheight()
+            position_x = int((screen_width - 300) / 2)
+            position_y = int((screen_height - 150) / 2)
+            ventana_emergente.geometry(f"300x150+{position_x}+{position_y}")
 
-        # Mantener referencia del icono
-        ventana_emergente.icon = icon
+            # Icono y mensaje
+            icon_path = os.path.join(self.base_dir, "iconos", "comprobado.png")
+            icon = ImageTk.PhotoImage(Image.open(icon_path).resize((50, 50)))
+            tk.Label(ventana_emergente, image=icon, bg="white").pack(pady=10)
+            tk.Label(ventana_emergente, text="Venta generada", font=("Arial", 14), bg="white").pack()
 
-        # Cerrar ventana emergente después de 3 segundos
-        def cerrar_ventana():
-            ventana_emergente.destroy()
+            # Mantener referencia del icono
+            ventana_emergente.icon = icon
 
-        self.after(3000, cerrar_ventana)
+            # Cerrar ventana emergente después de 3 segundos
+            def cerrar_ventana():
+                ventana_emergente.destroy()
+
+            self.after(3000, cerrar_ventana)
+        else:
+            tk.messagebox.showwarning("Error", "No se pudo realizar la venta. Verifica el stock disponible.")
 
     def abrir_carrito_compras(self):
         carrito = CarritoCompra(self)
+        # Limpiar la tabla del carrito
+        for item in carrito.tree.get_children():
+            carrito.tree.delete(item)
+
+        # Añadir los productos seleccionados al carrito
+        for producto in self.carrito_compras:
+            carrito.tree.insert("", "end", values=producto)
+
         carrito.grab_set()  # Hacer la ventana modal
         carrito.mainloop()
 

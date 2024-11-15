@@ -55,9 +55,10 @@ class VendedorControlador:
             print(f"Stock insuficiente para el producto {id_producto}")
             print(f"Stock disponible: {stock_disponible}")
             return False
-        
-        confirmacion = input(f"Confirmar venta de {cantidad} unidades de {nombre} (y/n): ").strip().lower()
-        if confirmacion == "y":
+
+        confirmacion = True
+        #confirmacion = input(f"Confirmar venta de {cantidad} unidades de {nombre} (y/n): ").strip().lower()
+        if confirmacion:
             conexion = self.conexion_bd.conexion_inventario()
             cursor = conexion.cursor()
 
