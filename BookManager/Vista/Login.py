@@ -1,7 +1,7 @@
 import os
 from tkinter import Tk, StringVar, messagebox
 from tkinter import ttk
-from BookManager.BookManager.Vista.Vendedor.Vender import Vender
+from BookManager.Vista.Vendedor.Vender import Vender
 
 import sqlite3
 import hashlib

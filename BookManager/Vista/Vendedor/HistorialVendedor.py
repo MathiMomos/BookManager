@@ -2,7 +2,7 @@ import os
 import tkinter as tk
 from tkinter import ttk
 from PIL import Image, ImageTk
-from BookManager.BookManager.Controlador.VendedorControlador import VendedorControlador  # Importar el controlador
+from BookManager.Controlador.VendedorControlador import VendedorControlador  # Importar el controlador
 
 class HistorialVendedor(tk.Frame):
     def __init__(self, parent):

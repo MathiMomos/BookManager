@@ -2,7 +2,7 @@ import os
 import tkinter as tk
 from tkinter import ttk, messagebox
 from PIL import Image, ImageTk
-from BookManager.BookManager.Controlador.VendedorControlador import VendedorControlador
+from BookManager.Controlador.VendedorControlador import VendedorControlador
 
 class InventarioVendedor(tk.Frame):
     def __init__(self, parent):

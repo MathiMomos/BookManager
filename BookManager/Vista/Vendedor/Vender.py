@@ -2,9 +2,9 @@ import os
 import tkinter as tk
 from tkinter import ttk, font
 from PIL import Image, ImageTk
-from BookManager.BookManager.Vista.Vendedor.InicioVendedor import InicioVendedor
-from BookManager.BookManager.Vista.Vendedor.InventarioVendedor import InventarioVendedor
-from BookManager.BookManager.Vista.Vendedor.HistorialVendedor import HistorialVendedor
+from BookManager.Vista.Vendedor.InicioVendedor import InicioVendedor
+from BookManager.Vista.Vendedor.InventarioVendedor import InventarioVendedor
+from BookManager.Vista.Vendedor.HistorialVendedor import HistorialVendedor
 
 
 class Vender(tk.Toplevel):
@@ -130,7 +130,7 @@ class Vender(tk.Toplevel):
 
     def volver_a_login(self):
         self.destroy()  # Cierra la ventana actual
-        from BookManager.BookManager.Vista.Login import Login  # Importación diferida para evitar circularidad
+        from BookManager.Vista.Login import Login  # Importación diferida para evitar circularidad
         login_app = Login()  # Crea una nueva instancia de Login
         login_app.mainloop()  # Muestra la ventana de Login
 

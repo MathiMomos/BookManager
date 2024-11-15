@@ -1,4 +1,4 @@
-from BookManager.BookManager.Data.ConexionBD import ConexionBD
+from BookManager.Data.ConexionBD import ConexionBD
 
 class VendedorControlador:
     
