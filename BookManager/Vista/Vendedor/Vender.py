@@ -6,6 +6,7 @@ from BookManager.BookManager.Vista.Vendedor.InicioVendedor import InicioVendedor
 from BookManager.BookManager.Vista.Vendedor.InventarioVendedor import InventarioVendedor
 from BookManager.BookManager.Vista.Vendedor.HistorialVendedor import HistorialVendedor
 from BookManager.BookManager.Vista.Vendedor.CarritoCompra import CarritoCompra
+from BookManager.BookManager.Controlador.VendedorControlador import VendedorControlador
 
 class Vender(tk.Toplevel):
     def __init__(self):
@@ -112,6 +113,10 @@ class Vender(tk.Toplevel):
         # Mostrar la pestaña "Inicio" al inicio
         self.cambiar_pestaña("Inicio")
 
+        # Inicializar controlador
+        self.vendedor_controlador = VendedorControlador()
+        self.mostrar_productos()
+
     def cambiar_pestaña(self, pestaña):
         # Ocultar todos los frames
         for frame in self.frames.values():
@@ -194,15 +199,6 @@ class Vender(tk.Toplevel):
         style.configure("Treeview.Heading", font=("Arial", 14, "bold"))
         style.configure("Treeview", font=("Arial", 12))
 
-        # Datos de ejemplo
-        productos = [
-            ("1", "Cuaderno", "10", "S/. 5", "S/. 50"),
-            ("2", "Lapicero", "10", "S/. 1", "S/. 10"),
-            ("3", "Plumones", "2", "S/. 4.50", "S/. 9"),
-        ]
-        for producto in productos:
-            self.tree.insert("", "end", values=producto)
-
         # Aumentar el alto de las filas
         style.configure("Treeview", rowheight=30)
 
@@ -251,7 +247,7 @@ class Vender(tk.Toplevel):
         producto = self.tree.item(selected_item, "values")
         descripcion = producto[1]
         precio = producto[3]
-        total = int(cantidad) * float(precio.split("/."))[1]
+        total = int(cantidad) * float(precio.split("/.")[1])
 
         # Mostrar ventana emergente
         ventana_emergente = tk.Toplevel(self)
@@ -298,3 +294,17 @@ class Vender(tk.Toplevel):
             x1, y1 + radius, x1, y1
         ]
         return canvas.create_polygon(points, smooth=True, **kwargs)
+
+    def mostrar_productos(self):
+        # Limpiar la tabla antes de agregar nuevos datos
+        for item in self.tree.get_children():
+            self.tree.delete(item)
+
+        # Obtener los productos del controlador
+        productos = self.vendedor_controlador.mostrar_productos()
+
+        # Insertar los productos en la tabla
+        for producto in productos:
+            id_producto, nombre, cantidad, precio = producto
+            total = cantidad * float(precio)
+            self.tree.insert("", "end", values=(id_producto, nombre, cantidad, f"S/. {precio}", f"S/. {total}"))
