@@ -2,6 +2,7 @@ import os
 import tkinter as tk
 from tkinter import ttk
 from PIL import Image, ImageTk
+from BookManager.BookManager.Controlador.VendedorControlador import VendedorControlador  # Importar el controlador
 
 class HistorialVendedor(tk.Frame):
     def __init__(self, parent):
@@ -17,10 +18,10 @@ class HistorialVendedor(tk.Frame):
 
         # Marco para la barra de búsqueda
         marco_busqueda = tk.Frame(self, bg="white")
-        marco_busqueda.pack(fill="x", pady=(0, 10))
+        marco_busqueda.pack(fill="x", pady=(0, 10), padx=10)
 
         canvas = tk.Canvas(marco_busqueda, width=500, height=50, bg="white", highlightthickness=0)
-        canvas.pack(fill="x", expand=True)
+        canvas.pack(side="left", fill="x", expand=True)
 
         # Rectangulo redondeado
         self.crear_rectangulo_redondeado(canvas, 10, 10, 490, 40, radio=15, relleno="#E6E6FA", borde="black")
@@ -31,21 +32,26 @@ class HistorialVendedor(tk.Frame):
         canvas.create_image(30, 25, image=self.icono_lupa, anchor="center")
 
         # Cuadro de entrada para búsqueda
-        entrada_busqueda = tk.Entry(marco_busqueda, font=("Arial", 12), bd=0, bg="#E6E6FA", fg="grey", width=40)
-        entrada_busqueda.insert(0, "Buscar en el historial")
+        self.entrada_busqueda = tk.Entry(marco_busqueda, font=("Arial", 12), bd=0, bg="#E6E6FA", fg="grey", width=40)
+        self.entrada_busqueda.insert(0, "Buscar en el historial")
 
         def on_entry_click(event):
-            if entrada_busqueda.get() == "Buscar en el historial":
-                entrada_busqueda.delete(0, "end")
-                entrada_busqueda.config(fg="black")
+            if self.entrada_busqueda.get() == "Buscar en el historial":
+                self.entrada_busqueda.delete(0, "end")
+                self.entrada_busqueda.config(fg="black")
 
-        entrada_busqueda.bind("<FocusIn>", on_entry_click)
-        canvas.create_window(250, 25, window=entrada_busqueda)
+        self.entrada_busqueda.bind("<FocusIn>", on_entry_click)
+        self.entrada_busqueda.bind("<Return>", self.buscar_por_id)  # Buscar al presionar Enter
+        canvas.create_window(250, 25, window=self.entrada_busqueda)
+
+        # Botón para mostrar todo
+        boton_mostrar_todo = tk.Button(marco_busqueda, text="Mostrar todo", command=self.mostrar_todo, bg="#d3d3d3", fg="black", font=("Arial", 12), padx=10, pady=5)
+        boton_mostrar_todo.pack(side="right", padx=5)
 
         # Tabla de historial de ventas
-        columnas = ("#", "Producto", "Cantidad", "Precio", "Fecha", "Hora")
-        tree = ttk.Treeview(self, columns=columnas, show="headings", height=8)
-        tree.pack(fill="both", expand=True, padx=10, pady=10)
+        columnas = ("#", "Producto", "Precio Unitario", "Cantidad", "Precio Total", "Fecha", "Hora")
+        self.tree = ttk.Treeview(self, columns=columnas, show="headings", height=8)
+        self.tree.pack(fill="both", expand=True, padx=10, pady=10)
 
         # Configurar las columnas
         estilo = ttk.Style()
@@ -53,21 +59,47 @@ class HistorialVendedor(tk.Frame):
         estilo.configure("Treeview", font=("Arial", 12), rowheight=30)
 
         for col in columnas:
-            tree.heading(col, text=col)
-            tree.column(col, anchor="center", width=120)
+            self.tree.heading(col, text=col)
+            self.tree.column(col, anchor="center", width=120)
 
-        # Datos de ejemplo
-        historial = [
-            ("1", "Cuaderno", "10", "S/. 5", "2024-11-06", "10:30:00"),
-            ("2", "Lapicero", "10", "S/. 1", "2024-11-06", "11:15:00"),
-            ("3", "Plumones", "2", "S/. 4.50", "2024-11-06", "12:00:00"),
-        ]
-        for venta in historial:
-            tree.insert("", "end", values=venta)
+        # Instanciar el controlador y cargar el historial de ventas
+        self.controlador = VendedorControlador()
+        self.cargar_historial_ventas()
 
         # Botón de exportar
         boton_exportar = tk.Button(self, text="Exportar historial", bg="green", fg="white", font=("Arial", 12), padx=10, pady=5)
         boton_exportar.pack(pady=10)
+
+    def cargar_historial_ventas(self):
+        historial = self.controlador.ver_historial_ventas() or []  # Asegurarse de que siempre sea una lista
+        if historial:
+            for venta in historial:
+                self.tree.insert("", "end", values=venta)
+        else:
+            print("No se encontraron ventas en el historial")
+
+    def buscar_por_id(self, event):
+        buscar_id = self.entrada_busqueda.get().strip()
+        if not buscar_id.isdigit():
+            return
+
+        # Limpiar la tabla
+        for item in self.tree.get_children():
+            self.tree.delete(item)
+
+        # Filtrar las ventas por ID
+        historial = self.controlador.ver_historial_ventas() or []
+        for venta in historial:
+            if str(venta[0]) == buscar_id:
+                self.tree.insert("", "end", values=venta)
+
+    def mostrar_todo(self):
+        # Limpiar la tabla
+        for item in self.tree.get_children():
+            self.tree.delete(item)
+
+        # Volver a cargar todas las ventas
+        self.cargar_historial_ventas()
 
     def crear_rectangulo_redondeado(self, canvas, x1, y1, x2, y2, radio=25, relleno="#E6E6FA", borde="black"):
         """Función para crear un rectángulo con bordes redondeados en el canvas."""

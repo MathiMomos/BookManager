@@ -105,13 +105,16 @@ class VendedorControlador:
         cursor.close()
         conexion.close()
 
-        if historial:
-            print("ID |         Nombre          | Precio Unitario | Cantidad | Precio Total | Fecha | Hora")
-            print("=" * 50)
-            for venta in historial:
-                print(f"{venta[0]} |         {venta[1]}         | {venta[2]} | {venta[3]} | {venta[4]} | {venta[5]} | {venta[6]}")
-        else:
-            print("No hay ninguna venta en el historial")
-    
+        return historial if historial else []
+
+        #if historial:
+        #    print("ID |         Nombre          | Precio Unitario | Cantidad | Precio Total | Fecha | Hora")
+        #    print("=" * 50)
+        #    for venta in historial:
+        #        print(
+        #            f"{venta[0]} |         {venta[1]}         | {venta[2]} | {venta[3]} | {venta[4]} | {venta[5]} | {venta[6]}")
+        #else:
+        #    print("No hay ninguna venta en el historial")
+
     def realizar_reembolso(self):
         pass
