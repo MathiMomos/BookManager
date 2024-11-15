@@ -6,7 +6,6 @@ from BookManager.BookManager.Vista.Vendedor.InicioVendedor import InicioVendedor
 from BookManager.BookManager.Vista.Vendedor.InventarioVendedor import InventarioVendedor
 from BookManager.BookManager.Vista.Vendedor.HistorialVendedor import HistorialVendedor
 from BookManager.BookManager.Vista.Vendedor.CarritoCompra import CarritoCompra
-import threading
 
 class Vender(tk.Toplevel):
     def __init__(self):
