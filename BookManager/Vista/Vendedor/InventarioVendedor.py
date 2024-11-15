@@ -1,6 +1,6 @@
 import os
 import tkinter as tk
-from tkinter import ttk, messagebox
+from tkinter import ttk
 from PIL import Image, ImageTk
 from BookManager.BookManager.Controlador.VendedorControlador import VendedorControlador
 
@@ -42,16 +42,12 @@ class InventarioVendedor(tk.Frame):
                 self.entrada_busqueda.config(fg="black")
 
         self.entrada_busqueda.bind("<FocusIn>", on_entry_click)
+        self.entrada_busqueda.bind("<Return>", self.buscar_producto)  # Buscar al presionar Enter
         canvas.create_window(250, 25, window=self.entrada_busqueda)
 
-        # Botón de búsqueda
-        boton_buscar = tk.Button(
-            marco_busqueda,
-            text="Buscar",
-            command=self.buscar_producto,
-            font=("Arial", 12),
-        )
-        boton_buscar.pack(side="right", padx=10)
+        # Botón para mostrar todo
+        boton_mostrar_todo = tk.Button(marco_busqueda, text="Mostrar todo", command=self.mostrar_todo, bg="#d3d3d3", fg="black", font=("Arial", 12), padx=10, pady=5)
+        boton_mostrar_todo.pack(side="right", padx=5, pady=5)
 
         # Tabla de inventario de productos
         columnas = ("#", "Nombre", "Cantidad", "Precio")
@@ -76,10 +72,33 @@ class InventarioVendedor(tk.Frame):
         boton_exportar.pack(pady=10)
 
     def cargar_inventario(self):
-        inventario = self.controlador.mostrar_productos()
+        inventario = self.controlador.mostrar_productos() or []
         if inventario:
             for producto in inventario:
                 self.tabla.insert("", "end", values=producto)
+
+    def buscar_producto(self, event=None):
+        id_producto = self.entrada_busqueda.get().strip()
+        if not id_producto.isdigit():
+            return
+
+        # Limpiar la tabla
+        for item in self.tabla.get_children():
+            self.tabla.delete(item)
+
+        # Filtrar el producto por ID
+        inventario = self.controlador.mostrar_productos() or []
+        for producto in inventario:
+            if str(producto[0]) == id_producto:
+                self.tabla.insert("", "end", values=producto)
+
+    def mostrar_todo(self):
+        # Limpiar la tabla
+        for item in self.tabla.get_children():
+            self.tabla.delete(item)
+
+        # Volver a cargar todo el inventario
+        self.cargar_inventario()
 
     def crear_rectangulo_redondeado(self, canvas, x1, y1, x2, y2, radio=25, relleno="#E6E6FA", borde="black"):
         points = [
@@ -92,44 +111,3 @@ class InventarioVendedor(tk.Frame):
             x1, y1 + radio, x1, y1
         ]
         return canvas.create_polygon(points, smooth=True, fill=relleno, outline=borde)
-
-    def buscar_producto(self):
-        id_producto = self.entrada_busqueda.get()
-        producto = self.controlador.ver_disponibilidad(id_producto)
-
-        if producto:
-            cantidad, precio, nombre = producto
-            self.mostrar_producto_ventana(nombre, cantidad, precio)
-        else:
-            self.mostrar_producto_no_encontrado()
-
-    def mostrar_producto_ventana(self, nombre, cantidad, precio):
-        # Crear una ventana emergente centrada
-        ventana = tk.Toplevel(self)
-        ventana.title("Producto Encontrado")
-        ventana.geometry("300x200")
-        ventana.transient(self)
-        ventana.grab_set()  # Para que la ventana sea modal
-
-        # Centrar la ventana en la pantalla
-        ventana.update_idletasks()
-        width = ventana.winfo_width()
-        height = ventana.winfo_height()
-        x = (ventana.winfo_screenwidth() // 2) - (width // 2)
-        y = (ventana.winfo_screenheight() // 2) - (height // 2)
-        ventana.geometry(f"{width}x{height}+{x}+{y}")
-
-        # Etiqueta con la información del producto
-        etiqueta_info = tk.Label(ventana, text="Este es el producto buscado:", font=("Arial", 14))
-        etiqueta_info.pack(pady=10)
-        etiqueta_producto = tk.Label(ventana, text=f"Nombre: {nombre}\nCantidad: {cantidad}\nPrecio: S/. {precio}",
-                                     font=("Arial", 12))
-        etiqueta_producto.pack(pady=10)
-
-        # Botón para cerrar la ventana
-        boton_cerrar = tk.Button(ventana, text="Cerrar", command=ventana.destroy)
-        boton_cerrar.pack(pady=10)
-
-    def mostrar_producto_no_encontrado(self):
-        # Crear una ventana emergente de aviso
-        messagebox.showinfo("Producto no encontrado", "El producto con el ID ingresado no existe en el inventario.")
