@@ -133,3 +133,4 @@ class InventarioVendedor(tk.Frame):
     def mostrar_producto_no_encontrado(self):
         # Crear una ventana emergente de aviso
         messagebox.showinfo("Producto no encontrado", "El producto con el ID ingresado no existe en el inventario.")
+        
