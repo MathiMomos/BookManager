@@ -271,6 +271,8 @@ class Vender(tk.Toplevel):
             tk.messagebox.showwarning("Advertencia", "El carrito de compras está vacío.")
             return
 
+        ventas_exitosas = []
+
         for producto in self.carrito_productos:
             descripcion, cantidad, total = producto
             id_producto = self.obtener_id_producto(descripcion)
@@ -284,35 +286,42 @@ class Vender(tk.Toplevel):
             venta_realizada = self.vendedor_controlador.vender_producto(id_producto, cantidad)
 
             if venta_realizada:
-                # Mostrar ventana emergente
-                ventana_popup = tk.Toplevel(self)
-                ventana_popup.title("Venta generada")
-                ventana_popup.geometry("300x150")
-                ventana_popup.transient(self)
-                ventana_popup.grab_set()
-                ventana_popup.configure(bg="white")
-                ancho_pantalla = self.winfo_screenwidth()
-                alto_pantalla = self.winfo_screenheight()
-                posicion_x = int((ancho_pantalla - 300) / 2)
-                posicion_y = int((alto_pantalla - 150) / 2)
-                ventana_popup.geometry(f"300x150+{posicion_x}+{posicion_y}")
-
-                # Icono y mensaje
-                ruta_icono = os.path.join(self.directorio_base, "iconos", "comprobado.png")
-                icon = ImageTk.PhotoImage(Image.open(ruta_icono).resize((50, 50)))
-                tk.Label(ventana_popup, image=icon, bg="white").pack(pady=10)
-                tk.Label(ventana_popup, text="Venta generada", font=("Arial", 14), bg="white").pack()
-
-                # Mantener referencia del icono
-                ventana_popup.icon = icon
-
-                # Cerrar ventana emergente después de 3 segundos
-                def cerrar_ventana():
-                    ventana_popup.destroy()
-
-                self.after(3000, cerrar_ventana)
+                ventas_exitosas.append(descripcion)
             else:
-                tk.messagebox.showwarning("Error", f"No se pudo realizar la venta del producto '{descripcion}'. Verifica el stock disponible.")
+                tk.messagebox.showwarning("Error",
+                                          f"No se pudo realizar la venta del producto '{descripcion}'. Verifica el stock disponible.")
+
+        # Mostrar la ventana emergente solo una vez, si hubo ventas exitosas
+        if ventas_exitosas:
+            ventana_popup = tk.Toplevel(self)
+            ventana_popup.title("Venta generada")
+            ventana_popup.geometry("300x150")
+            ventana_popup.transient(self)
+            ventana_popup.grab_set()
+            ventana_popup.configure(bg="white")
+            ancho_pantalla = self.winfo_screenwidth()
+            alto_pantalla = self.winfo_screenheight()
+            posicion_x = int((ancho_pantalla - 300) / 2)
+            posicion_y = int((alto_pantalla - 150) / 2)
+            ventana_popup.geometry(f"300x150+{posicion_x}+{posicion_y}")
+
+            # Icono y mensaje
+            ruta_icono = os.path.join(self.directorio_base, "iconos", "comprobado.png")
+            icon = ImageTk.PhotoImage(Image.open(ruta_icono).resize((50, 50)))
+            tk.Label(ventana_popup, image=icon, bg="white").pack(pady=10)
+            tk.Label(ventana_popup, text="Venta generada", font=("Arial", 14), bg="white").pack()
+
+            # Mantener referencia del icono
+            ventana_popup.icon = icon
+
+            # Cerrar ventana emergente después de 3 segundos
+            def cerrar_ventana():
+                ventana_popup.destroy()
+
+            self.after(3000, cerrar_ventana)
+
+        # Vaciar el carrito después de procesar todas las ventas
+        self.carrito_productos = []
 
     def obtener_id_producto(self, descripcion):
         # Buscar el producto en la tabla de lista_productos para obtener su ID
