@@ -1,9 +1,10 @@
 from BookManager.BookManager.Data.ConexionBD import ConexionBD
-
+from collections import deque
 class VendedorControlador:
     
     def __init__(self):
         self.conexion_bd = ConexionBD()
+        self.cola_reembolsos = deque()
 
     def mostrar_productos(self):
         conexion = self.conexion_bd.conexion_inventario()
@@ -117,5 +118,55 @@ class VendedorControlador:
         #else:
         #    print("No hay ninguna venta en el historial")
 
+    def solicitar_reembolso(self, id_pedido):
+        self.cola_reembolsos.append(id_pedido)
+        print(f"Reembolso solicitado para la venta con ID {id_pedido}")
+
     def realizar_reembolso(self):
-        pass
+        if not self.cola_reembolsos:
+            print("No hay solicitudes de reembolso pendientes.")
+            return False
+
+        id_pedido = self.cola_reembolsos.popleft()
+
+        conexion_ventas = self.conexion_bd.conexion_ventas()
+        cursor_ventas = conexion_ventas.cursor()
+        cursor_ventas.execute("SELECT producto, cantidad FROM ventas WHERE idPedido = ?", (id_pedido,))
+        venta = cursor_ventas.fetchone()
+
+        #cursor_ventas.close()
+        #conexion_ventas.close()
+
+        if venta is None:
+            print(f"No se encontró la venta con ID {id_pedido}")
+            return False
+
+        nombre_producto, cantidad = venta
+
+        conexion_inventario = self.conexion_bd.conexion_inventario()
+        cursor_inventario = conexion_inventario.cursor()
+
+        cursor_inventario.execute("SELECT cantidad FROM inventario WHERE nombre = ?", (nombre_producto,))
+        inventario = cursor_inventario.fetchone()
+
+        if inventario is None:
+            print(f"No se encontró el producto {nombre_producto} en el inventario")
+            return
+
+        cantidad_actual = inventario[0]
+        nueva_cantidad = cantidad_actual + cantidad
+
+        cursor_inventario.execute("UPDATE inventario SET cantidad = ? WHERE nombre = ?",
+                                  (nueva_cantidad, nombre_producto))
+        conexion_inventario.commit()
+
+        cursor_ventas.execute("DELETE FROM ventas WHERE idPedido = ?", (id_pedido,))
+        conexion_ventas.commit()
+
+        cursor_inventario.close()
+        conexion_inventario.close()
+
+        print(
+            f"Reembolso procesado para el pedido ID {id_pedido}: {cantidad} unidades de {nombre_producto} devueltas al inventario.")
+
+        return True # Para la interfaz grafica y no me de error
