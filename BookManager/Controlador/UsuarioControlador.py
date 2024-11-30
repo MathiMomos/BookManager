@@ -1,6 +1,5 @@
 # fabien
-import user_management
-
+from archivosAnteriores import user_management
 class Usuario:
     def __init__(self, nombreUsuario, contraseña, rol="user"):
         self.nombreUsuario = nombreUsuario
