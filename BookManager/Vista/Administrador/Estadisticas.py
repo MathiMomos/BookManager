@@ -1,4 +1,3 @@
-# BookManager/Vista/Administrador/Estadisticas.py
 from tkinter import ttk
 import tkinter as tk
 from BookManager.Controlador.EstadisticasControlador import EstadisticasControlador
