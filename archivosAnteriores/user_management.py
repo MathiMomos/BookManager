@@ -1,8 +1,15 @@
+import os
 import sqlite3
 import hashlib
 
 def connect_db():
-    connection = sqlite3.connect('users.db')
+    # Obtén la ruta absoluta a la carpeta 'archivosAnteriores' y luego accede a 'BookManager/Data'
+    base_dir = os.path.dirname(os.path.abspath(__file__))  # Directorio actual de archivosAnteriores
+    db_ruta = os.path.join(base_dir, "..", "BookManager", "Data", "users.db")  # Ruta relativa a la base de datos
+
+    print(f"Conectando a la base de datos en: {db_ruta}")  # Imprime la ruta para depuración
+
+    connection = sqlite3.connect(db_ruta)
     cursor = connection.cursor()
 
     cursor.execute('''CREATE TABLE IF NOT EXISTS users (

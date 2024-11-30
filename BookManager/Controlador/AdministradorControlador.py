@@ -33,10 +33,10 @@ class Administrador:
                 print("Volviendo")
                 break
 
-    def agregarProducto(self):
-        nombre = input("Nombre del producto: ").lower().strip()
-        cantidad = int(input("Cantidad: "))
-        precio = float(input("Precio: "))
+    def agregarProducto(self,nombre,cantidad,precio):
+        # nombre = input("Nombre del producto: ").lower().strip()
+        # cantidad = int(input("Cantidad: "))
+        # precio = float(input("Precio: "))
         
         self.controlador_inventario.agregar_producto(nombre, cantidad, precio)
 
@@ -170,3 +170,15 @@ class Administrador:
                 print(f"{venta[0]} |         {venta[1]}         | {venta[2]} | {venta[3]} | {venta[4]} | {venta[5]} | {venta[6]}")
         else:
             print("No hay ninguna venta en el historial")
+
+    def buscar_historial_por_id(self,id):
+        conexion = self.conexion_bd.conexion_ventas()
+        cursor = conexion.cursor()
+
+        cursor.execute("SELECT idPedido, producto, precioUnitario, cantidad, precioTotal, fecha, hora from ventas WHERE idPedido = ?", (id,))
+        historial = cursor.fetchone()
+
+        cursor.close()
+        conexion.close()
+
+        return historial

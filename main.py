@@ -1,8 +1,8 @@
-from BookManager.Vista.ConsolaMenu import ConsolaMenu
+from BookManager.Vista.Login import Login
 
 def main():
-    objeto = ConsolaMenu()
-    objeto.consolaLogin()
+    objeto = Login()
+    objeto.mainloop()
     #Coso para que se inicialice la base de datos
     #inicializar intefaz11
 

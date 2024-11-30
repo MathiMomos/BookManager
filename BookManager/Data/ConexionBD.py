@@ -2,7 +2,17 @@ import sqlite3
 import os
 
 class ConexionBD:
-    
+
+    def conexion_usuarios(self):
+        BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+        db_path = os.path.join(BASE_DIR, "users.db")
+        conexion = sqlite3.connect(db_path)
+
+        cursor = conexion.cursor()
+
+        cursor.close()
+        return conexion
+
     #CONEXION A BD INVENTARIO.DB:
     def conexion_inventario(self):
         BASE_DIR = os.path.dirname(os.path.abspath(__file__))

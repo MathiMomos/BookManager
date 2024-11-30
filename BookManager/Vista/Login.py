@@ -1,7 +1,10 @@
 import os
 from tkinter import Tk, StringVar, messagebox
 from tkinter import ttk
-from BookManager.BookManager.Vista.Vendedor.Vender import Vender
+
+from BookManager.Vista.Administrador.Inicio import Inicio
+from BookManager.Vista.Vendedor.Vender import Vender
+
 
 import sqlite3
 import hashlib
@@ -40,7 +43,7 @@ class Login(Tk):
             self.withdraw()  # Oculta la ventana de Login en lugar de destruirla
             if rol == "admin":
                 # Parte de Luis (Administrador)
-                print("Administrador")
+                self.abrir_interfaz_administrador()
             elif rol == "usuario":
                 self.abrir_interfaz_vendedor()
             else:
@@ -77,6 +80,10 @@ class Login(Tk):
     def abrir_interfaz_vendedor(self):
         app = Vender()
         app.mainloop()
+    def abrir_interfaz_administrador(self):
+        app_admin = Inicio()
+        app_admin.mainloop()
+
 
 if __name__ == "__main__":
     login_app = Login()

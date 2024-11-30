@@ -141,7 +141,6 @@ class Vender(tk.Toplevel):
         login_app = Login()  # Crea una nueva instancia de Login
         login_app.mainloop()  # Muestra la ventana de Login
 
-    #CONTENIDO PARA VENDER
     def create_vender_frame(self, parent):
         frame = tk.Frame(parent, bg="white")
 
@@ -153,7 +152,7 @@ class Vender(tk.Toplevel):
         canvas.pack(fill="x", expand=True)
 
         # Llamar a la función para crear un rectángulo redondeado
-        self.rectangulo_busqueda(canvas, 10, 10, 490, 40, radius=15, fill="#E6E6FA", outline="black")
+        self.create_rounded_rectangle(canvas, 10, 10, 490, 40, radius=15, fill="#E6E6FA", outline="black")
 
         # Cargar el icono de búsqueda
         self.search_icon = ImageTk.PhotoImage(
@@ -172,9 +171,10 @@ class Vender(tk.Toplevel):
         search_entry.bind("<FocusIn>", on_entry_click) # Llama a la función on_entry_click al hacer clic en el cuadro de entrada
         canvas.create_window(250, 25, window=search_entry)
 
-        # Entrada para cantidad a vender
-        cantidad_frame = tk.Frame(frame, bg="white") # Frame para la cantidad
+        # Entry para cantidad a vender
+        cantidad_frame = tk.Frame(frame, bg="white")
         cantidad_frame.pack(fill="x", pady=5)
+
         self.cantidad_label = tk.Label(cantidad_frame, text="Cantidad a vender:", font=("Arial", 12), bg="white")
         self.cantidad_label.pack(side="left", padx=10)
         self.cantidad_entry = tk.Entry(cantidad_frame, font=("Arial", 12), width=10)
@@ -340,7 +340,7 @@ class Vender(tk.Toplevel):
         carrito.grab_set()  # Hacer la ventana modal, acepta entradas como clics y teclas
         carrito.mainloop() # Para q no se cierre inmediatamente la ventana
 
-    def rectangulo_busqueda(self, canvas, x1, y1, x2, y2, radius=25, **kwargs):
+    def create_rounded_rectangle(self, canvas, x1, y1, x2, y2, radius=25, **kwargs):
         """Función para crear un rectángulo con bordes redondeados en el canvas."""
         points = [
             x1 + radius, y1,

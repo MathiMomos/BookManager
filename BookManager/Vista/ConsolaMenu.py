@@ -1,4 +1,3 @@
-from BookManager.Controlador.VentasControlador import VentasControlador
 from BookManager.Controlador.VendedorControlador import VendedorControlador
 from BookManager.Controlador.AdministradorControlador import Administrador
 
@@ -106,11 +105,6 @@ class ConsolaMenu:
     # Opcion 3
     def verEstadisticas(self):
         print("Generando reporte de estadísticas...")
-        
-        objetoVentasControlador = VentasControlador()
-        objetoVentasControlador.generar_reporte_ventas()
-        
-        print("Reporte generado exitosamente: 'reporte_ventas.pdf'")
 
     # Opcion 4
     def gestionarInventario(self):
