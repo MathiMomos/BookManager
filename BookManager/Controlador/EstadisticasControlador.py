@@ -1,3 +1,4 @@
+# BookManager/Controlador/EstadisticasControlador.py
 from BookManager.Modelo.EstadisticasSQL import EstadisticasSQL
 
 class EstadisticasControlador:
