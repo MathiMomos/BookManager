@@ -3,6 +3,7 @@ import tkinter as tk
 from tkinter import ttk
 from PIL import Image, ImageTk
 from BookManager.Controlador.VendedorControlador import VendedorControlador
+from BookManager.Controlador.InventarioControlador import InventarioControlador
 
 class InventarioVendedor(tk.Frame):
     def __init__(self, parent):
@@ -68,8 +69,12 @@ class InventarioVendedor(tk.Frame):
 
         # Botón de exportación (opcional)
         boton_exportar = tk.Button(self, text="Exportar inventario", bg="green", fg="white", font=("Arial", 12),
-                                   padx=10, pady=5)
+                                   padx=10, pady=5, command=self.exportar_inventario)
         boton_exportar.pack(pady=10)
+
+    def exportar_inventario(self):
+        controlador = InventarioControlador()
+        controlador.exportar_inventario()
 
     def cargar_inventario(self):
         inventario = self.controlador.mostrar_productos() or []

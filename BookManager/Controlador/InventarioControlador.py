@@ -1,3 +1,8 @@
+
+from datetime import datetime
+import os
+import pandas as pd
+
 from BookManager.Data.ConexionBD import ConexionBD
 
 class InventarioControlador:
@@ -58,6 +63,33 @@ class InventarioControlador:
         for producto in productos_ordenados:
             print(f"Nombre: {producto.nombre}, Cantidad: {producto.cantidad}, Precio: {producto.precio}")
         return productos_ordenados
+
+    def exportar_inventario(self):
+        # Consultar los productos del inventario desde la base de datos
+        cursor = self.conexion_bd.cursor()
+        cursor.execute("SELECT idProducto, nombre, cantidad, precio FROM inventario")
+        productos = cursor.fetchall()
+        cursor.close()
+
+        # Convertir los datos en un DataFrame de Pandas
+        df = pd.DataFrame(productos, columns=["ID", "Nombre", "Cantidad", "Precio"])
+
+        # Crear el nombre del archivo con la fecha actual
+        fecha_actual = datetime.now().strftime("%Y-%m-%d")
+        directorio_base = os.path.dirname(os.path.abspath(__file__))
+        ruta_guardado = os.path.join(directorio_base, "InventariosExportados")
+
+        # Crear la carpeta si no existe
+        if not os.path.exists(ruta_guardado):
+            os.makedirs(ruta_guardado)
+
+        # Definir la ruta completa del archivo
+        archivo_nombre = f"{fecha_actual}.xlsx"
+        archivo_completo = os.path.join(ruta_guardado, archivo_nombre)
+
+        # Exportar el DataFrame a un archivo Excel
+        df.to_excel(archivo_completo, index=False, engine='openpyxl')
+        print(f"Inventario exportado correctamente a {archivo_completo}")
 
 class Producto:
     def __init__(self, id_producto, nombre, cantidad, precio):

@@ -1,4 +1,5 @@
 from BookManager.Vista.Administrador.PlantillaAdministrador import *
+from BookManager.Controlador.InventarioControlador import InventarioControlador
 import tkinter as tk
 
 class Inventario(PlantillaAdministrador):
@@ -182,8 +183,10 @@ class Inventario(PlantillaAdministrador):
         self.mostrar_ventana_formulario(modo="modificar", datos=valores)
     def eliminar(self):
         pass
+
     def exportar_inventario(self):
-        pass
+        controlador = InventarioControlador()
+        controlador.exportar_inventario()
 
     def obtener_fila_seleccionada(self):
         # Obtiene la fila seleccionada en la tabla
