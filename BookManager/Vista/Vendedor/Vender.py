@@ -95,7 +95,7 @@ class Vender(tk.Toplevel):
             anchor="w",
             padx=10,
             font=self.menu_font,
-            command=self.volver_a_login
+            command=self.volver_a_login # Llama a la función para volver al login
         )
         salir_button.pack(side="bottom", fill="x", pady=5, ipady=5)
 
@@ -110,18 +110,19 @@ class Vender(tk.Toplevel):
         self.frames["Historial de ventas"] = HistorialVendedor(self.main_frame)
         self.frames["Ver inventario"] = InventarioVendedor(self.main_frame)
 
-        # Mostrar la pestaña "Inicio" al inicio
+        # Mostrar la pestaña "Inicio" al loguearse
         self.cambiar_pestaña("Inicio")
 
         # Inicializar controlador
         self.vendedor_controlador = VendedorControlador()
+
         self.carrito_compras = []  # Lista para almacenar los productos seleccionados para el carrito
-        self.mostrar_productos()
+        self.mostrar_productos() # Llama a la función para mostrar los productos
 
     def cambiar_pestaña(self, pestaña):
         # Ocultar todos los frames
         for frame in self.frames.values():
-            frame.pack_forget()
+            frame.pack_forget() # Para ocultar el frame
 
         # Mostrar el frame correspondiente
         self.frames[pestaña].pack(fill="both", expand=True)
@@ -168,11 +169,11 @@ class Vender(tk.Toplevel):
                 search_entry.delete(0, "end")
                 search_entry.config(fg="black")
 
-        search_entry.bind("<FocusIn>", on_entry_click)
+        search_entry.bind("<FocusIn>", on_entry_click) # Llama a la función on_entry_click al hacer clic en el cuadro de entrada
         canvas.create_window(250, 25, window=search_entry)
 
         # Entrada para cantidad a vender
-        cantidad_frame = tk.Frame(frame, bg="white")
+        cantidad_frame = tk.Frame(frame, bg="white") # Frame para la cantidad
         cantidad_frame.pack(fill="x", pady=5)
         self.cantidad_label = tk.Label(cantidad_frame, text="Cantidad a vender:", font=("Arial", 12), bg="white")
         self.cantidad_label.pack(side="left", padx=10)
@@ -181,8 +182,8 @@ class Vender(tk.Toplevel):
 
         # Tabla de productos con más columnas
         columns = ("#", "Descripción", "Cantidad", "Precio", "Total")
-        self.tree = ttk.Treeview(frame, columns=columns, show="headings", height=8, selectmode="browse")
-        self.tree.pack(fill="both", expand=True)
+        self.tree = ttk.Treeview(frame, columns=columns, show="headings", height=8, selectmode="browse") # Para crear la tabla
+        self.tree.pack(fill="both", expand=True) # Para expandir la tabla
 
         # Configurar columnas
         self.tree.heading("#", text="#")
@@ -208,6 +209,7 @@ class Vender(tk.Toplevel):
         action_frame = tk.Frame(frame, bg="white")
         action_frame.pack(fill="x", pady=10)
 
+        # Botón para agregar a carrito
         agregar_carrito_button = tk.Button(
             action_frame,
             text="Agregar a carrito",
@@ -220,6 +222,7 @@ class Vender(tk.Toplevel):
         )
         agregar_carrito_button.pack(side="left", padx=10)
 
+        # Botón para abrir el carrito de compras
         carrito_button = tk.Button(
             action_frame,
             text="Carrito de compras",
@@ -229,11 +232,12 @@ class Vender(tk.Toplevel):
             relief="flat",
             anchor="w",
             padx=10,
-            font=self.menu_font,
+            font=self.menu_font, # Usa la fuente del menú
             command=self.abrir_carrito_compras
         )
         carrito_button.pack(side="left", padx=10)
 
+        # Botón para confirmar la compra
         confirm_button = tk.Button(
             action_frame, text="Confirmar compra y generar ticket",
             bg="green", fg="white", padx=10, pady=5,
@@ -246,7 +250,7 @@ class Vender(tk.Toplevel):
 
     def agregar_a_carrito(self):
         # Obtener el producto seleccionado
-        selected_item = self.tree.selection()
+        selected_item = self.tree.selection() # Para obtener los elementos seleccionados
         if not selected_item:
             tk.messagebox.showwarning("Advertencia", "Por favor, selecciona un producto de la tabla.")
             return
@@ -258,13 +262,13 @@ class Vender(tk.Toplevel):
             return
 
         # Obtener los datos del producto seleccionado
-        producto = self.tree.item(selected_item, "values")
+        producto = self.tree.item(selected_item, "values") # Tupla con los valores de la fila seleccionada
         descripcion = producto[1]
         precio = float(producto[3].replace('S/. ', '').strip())
         total = int(cantidad) * precio
 
         # Añadir el producto al carrito de compras
-        self.carrito_compras.append((descripcion, cantidad, f"S/. {total:.2f}"))
+        self.carrito_compras.append((descripcion, cantidad, f"S/. {total:.2f}")) # Es una lista : carrito_compras
         tk.messagebox.showinfo("Producto agregado", f"{cantidad} unidades de '{descripcion}' agregado al carrito.")
 
     def confirmar_compra(self):
@@ -324,7 +328,7 @@ class Vender(tk.Toplevel):
         return None
 
     def abrir_carrito_compras(self):
-        carrito = CarritoCompra(self)
+        carrito = CarritoCompra(self) # Crea una nueva ventana de carrito de compras
         # Limpiar la tabla del carrito
         for item in carrito.tree.get_children():
             carrito.tree.delete(item)
@@ -333,8 +337,8 @@ class Vender(tk.Toplevel):
         for producto in self.carrito_compras:
             carrito.tree.insert("", "end", values=producto)
 
-        carrito.grab_set()  # Hacer la ventana modal
-        carrito.mainloop()
+        carrito.grab_set()  # Hacer la ventana modal, acepta entradas como clics y teclas
+        carrito.mainloop() # Para q no se cierre inmediatamente la ventana
 
     def rectangulo_busqueda(self, canvas, x1, y1, x2, y2, radius=25, **kwargs):
         """Función para crear un rectángulo con bordes redondeados en el canvas."""

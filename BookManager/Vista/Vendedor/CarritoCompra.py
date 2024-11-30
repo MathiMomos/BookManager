@@ -49,23 +49,15 @@ class CarritoCompra(tk.Toplevel):
         self.tree.heading("Total", text="Total")
         self.tree.column("Total", anchor="center", width=100)
 
-        # Añadir un ejemplo de producto al carrito
-        productos = [
-            ("Lapicero", "5", "S/. 25.00"),
-            ("Cuaderno", "3", "S/. 15.00"),
-        ]
-        for producto in productos:
-            self.tree.insert("", "end", values=producto)
-
         # Botón para eliminar una fila seleccionada
         eliminar_button = tk.Button(self, text="Eliminar producto", command=self.eliminar_producto, bg="red",
                                     fg="white", font=("Arial", 12))
         eliminar_button.pack(pady=5)
 
-        # Botón para cerrar la ventana
-        cerrar_button = tk.Button(self, text="Guardar cambios", command=self.guardar_cambios, bg="#FFA07A", fg="black",
+        # Botón para guardar los cambios
+        guardar_button = tk.Button(self, text="Guardar cambios", command=self.guardar_cambios, bg="#FFA07A", fg="black",
                                   font=("Arial", 12))
-        cerrar_button.pack(pady=10)
+        guardar_button.pack(pady=10)
 
     def eliminar_producto(self):
         selected_item = self.tree.selection()  # Obtener la fila seleccionada
@@ -75,7 +67,7 @@ class CarritoCompra(tk.Toplevel):
     def guardar_cambios(self):
         # Actualizar la lista del carrito en la ventana principal
         self.parent.carrito_compras = []
-        for item in self.tree.get_children():
+        for item in self.tree.get_children(): # Recorrer todas las filas para obtener los valores
             values = self.tree.item(item, 'values')
             producto, unidades, total = values
             self.parent.carrito_compras.append((producto, int(unidades), total))

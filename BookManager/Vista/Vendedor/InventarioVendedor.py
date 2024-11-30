@@ -66,11 +66,6 @@ class InventarioVendedor(tk.Frame):
         # Llenar la tabla con los productos del inventario desde la base de datos
         self.cargar_inventario()
 
-        # Botón de exportación (opcional)
-        boton_exportar = tk.Button(self, text="Exportar inventario", bg="green", fg="white", font=("Arial", 12),
-                                   padx=10, pady=5)
-        boton_exportar.pack(pady=10)
-
     def cargar_inventario(self):
         inventario = self.controlador.mostrar_productos() or []
         if inventario:
