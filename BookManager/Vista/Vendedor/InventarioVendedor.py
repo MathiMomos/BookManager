@@ -3,6 +3,7 @@ import tkinter as tk
 from tkinter import ttk
 from PIL import Image, ImageTk
 from BookManager.Controlador.VendedorControlador import VendedorControlador
+from BookManager.Controlador.InventarioControlador import InventarioControlador
 
 class InventarioVendedor(tk.Frame):
     def __init__(self, parent):
@@ -65,6 +66,10 @@ class InventarioVendedor(tk.Frame):
 
         # Llenar la tabla con los productos del inventario desde la base de datos
         self.cargar_inventario()
+
+    def exportar_inventario(self):
+        controlador = InventarioControlador()
+        controlador.exportar_inventario()
 
     def cargar_inventario(self):
         inventario = self.controlador.mostrar_productos() or []
