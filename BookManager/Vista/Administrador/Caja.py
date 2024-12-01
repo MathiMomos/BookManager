@@ -1,6 +1,8 @@
 from BookManager.Vista.Administrador.PlantillaAdministrador import PlantillaAdministrador
 import tkinter as tk
 
+# Esta clase dejó de funcionar por que los ingresos se pueden ver en estadistica
+
 class Caja(PlantillaAdministrador):
     def __init__(self):
         super().__init__()
