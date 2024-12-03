@@ -159,17 +159,30 @@ class Vender(tk.Toplevel):
             Image.open(os.path.join(self.base_dir, "iconos", "lupa.png")).resize((24, 24)))
         canvas.create_image(30, 25, image=self.search_icon, anchor="center")
 
-        # Crear el cuadro de entrada
+        # Cuadro de entrada para búsqueda por nombre
         search_entry = tk.Entry(search_frame, font=("Arial", 12), bd=0, bg="#E6E6FA", fg="grey", width=40)
-        search_entry.insert(0, "Ingresa el ID del producto")
+        search_entry.insert(0, "Buscar por nombre")
 
         def on_entry_click(event):
-            if search_entry.get() == "Ingresa el ID del producto":
+            if search_entry.get() == "Buscar por nombre":
                 search_entry.delete(0, "end")
                 search_entry.config(fg="black")
 
-        search_entry.bind("<FocusIn>", on_entry_click) # Llama a la función on_entry_click al hacer clic en el cuadro de entrada
+        search_entry.bind("<FocusIn>", on_entry_click)
+        search_entry.bind("<Return>",
+                          lambda event: self.mostrar_productos(search_entry.get()))  # Buscar al presionar Enter
         canvas.create_window(250, 25, window=search_entry)
+
+        # Botón para mostrar todo el inventario
+        mostrar_todo_button = tk.Button(
+            search_frame,
+            text="Mostrar todo",
+            command=lambda: self.mostrar_productos(),  # Mostrar todo sin filtros
+            bg="#d3d3d3",
+            fg="black",
+            font=("Arial", 12)
+        )
+        mostrar_todo_button.pack(side="right", padx=10)
 
         # Entry para cantidad a vender
         cantidad_frame = tk.Frame(frame, bg="white")
@@ -353,17 +366,15 @@ class Vender(tk.Toplevel):
         ]
         return canvas.create_polygon(points, smooth=True, **kwargs)
 
-    def mostrar_productos(self):
-        # Limpiar la tabla antes de agregar nuevos datos
+    def mostrar_productos(self, filtro_nombre=None):
+        productos = self.vendedor_controlador.mostrar_productos()
+        if filtro_nombre:
+            productos = [p for p in productos if filtro_nombre.lower() in p[1].lower()]
+        # Limpiar la tabla
         for item in self.tree.get_children():
             self.tree.delete(item)
-
-        # Obtener los productos del controlador
-        productos = self.vendedor_controlador.mostrar_productos()
-
-        # Insertar los productos en la tabla
+        # Cargar los productos filtrados
         for producto in productos:
             id_producto, nombre, cantidad, precio = producto
             total = cantidad * float(precio)
             self.tree.insert("", "end", values=(id_producto, nombre, cantidad, f"S/. {precio}", f"S/. {total}"))
-
