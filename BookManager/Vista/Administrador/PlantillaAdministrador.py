@@ -72,12 +72,12 @@ class PlantillaAdministrador(tk.Toplevel):
                    )
         #CREANDO WIDGETS ---------------------------------------------
 
-        #Creacion de Frame1 ---------------------------
+        #Creacion de Frame1 --------------------------- donde estara el panel de opciones
         self.Frame1 = ttk.Frame(self,style="MiFrame.TFrame")
         self.Frame1.grid(row=0, column=0, sticky="nsew")
 
-        # El frame tendra 10 filas y 1 columna
-        for i in range(0,10,1):
+        # El frame tendra 9 filas y 1 columna
+        for i in range(0,9,1):
             self.Frame1.rowconfigure(i,weight=1)
         self.Frame1.columnconfigure(0,weight=1)
 
@@ -85,16 +85,16 @@ class PlantillaAdministrador(tk.Toplevel):
         #Creacion de los botones -----------------------------------------
 
         self.cargar_imagenes_panel_opciones()
-        lista_nombres_botones = ["Inicio", "Inventario", "Vender", "Caja", "Historial de ventas", "Estadisticas", "Vendedores"]
-        lista_nombres_comandos = [self.goInicio,self.goInventario,self.goVender,self.goCaja,self.goHistorialDeVentas,self.goEstadisticas,self.goVendedores]
+        lista_nombres_botones = ["Inicio", "Inventario", "Vender", "Historial de ventas", "Estadisticas", "Vendedores"]
+        lista_nombres_comandos = [self.goInicio,self.goInventario,self.goVender,self.goHistorialDeVentas,self.goEstadisticas,self.goVendedores]
 
         # Generando los botones del panel de opciones
         for i,nombre,comando in zip(range(1,len(lista_nombres_botones)+1),lista_nombres_botones,lista_nombres_comandos):
             self.Boton = ttk.Button(self.Frame1,text=nombre,style="MiBoton.TButton",compound="left",image = self.imagenes_cargadas[i-1],command=comando)
             self.Boton.grid(row=i,column=0,sticky="nsew")
 
-        self.Boton8 = ttk.Button(self.Frame1, text="Salir", style="MiBoton_salir.TButton", compound="left",image = self.imagenes_cargadas[7],command=self.goSalir)
-        self.Boton8.grid(row=8, column=0, sticky="nsew")
+        self.Boton7 = ttk.Button(self.Frame1, text="Salir", style="MiBoton_salir.TButton", compound="left",image = self.imagenes_cargadas[6],command=self.goSalir)
+        self.Boton7.grid(row=7, column=0, sticky="nsew")
 
         # CREACION DE LAS ETIQUETAS ------------------------------------
 
@@ -107,7 +107,7 @@ class PlantillaAdministrador(tk.Toplevel):
         ruta_base = os.path.join(directorio_base, "Iconos", "panel_de_opciones")
 
         # Lista con los nombres de archivos de las imágenes
-        imagenes_nombres = ["Inicio.png", "Inventario.png", "Vender.png", "Caja.png",
+        imagenes_nombres = ["Inicio.png", "Inventario.png", "Vender.png",
                             "Historial.png", "Estadisticas.png", "Vendedores.png", "Salir.png"]
 
         self.imagenes_cargadas = []  # Lista para almacenar las imágenes cargadas
@@ -147,9 +147,6 @@ class PlantillaAdministrador(tk.Toplevel):
         objetoHistorial = Historial()
         objetoHistorial.mainloop()
 
-    def goCaja(self):
-        pass
-
     def goEstadisticas(self):
         from BookManager.Vista.Administrador.Estadisticas import Estadisticas
         self.destroy()
@@ -168,9 +165,9 @@ class PlantillaAdministrador(tk.Toplevel):
             self.destroy()
             from BookManager.Vista.Login import Login
             inicio_login = Login()
-            inicio_login.deiconify()
+            inicio_login.mainloop()
         else:
-            pass
+            return
 
 
 

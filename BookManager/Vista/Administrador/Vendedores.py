@@ -11,7 +11,80 @@ class Vendedores(PlantillaAdministrador):
 
     def agregar_mas_widgets(self):
         # Aqui van los estilos
+        estilo = ttk.Style()
+        estilo.theme_use("clam")
+        # Estilos para las etiquetas de titulo
+        estilo.configure(
+            "etiquetaTitulo.TLabel",
+            foreground="Gray",  # Color del texto
 
+            font=("Helvetica", 16, "bold"),  # Tipo de fuente, tamaño, y estilo (negrita)
+        )
+        # Este es para el boton de agregar
+        estilo.configure(
+            "botonAgregar.TButton",
+            background="#f0f0f0",  # Color de fondo normal (Verde)
+            foreground="black",  # Color del texto
+            font=("Arial", 16, "bold"),
+            borderwidth=0,  # Eliminar el borde
+            relief="flat"  # Eliminar el relieve (bordes)
+        )
+        estilo.map("botonAgregar.TButton",
+                   foreground=[("pressed", "black"), ("active", "black")],  # Cambia el color del texto al presionar
+                   background=[("pressed", "#88c659"), ("active", "#b8d7a1")]  # Cambia el color de fondo al presionar
+        )
+        # Para el boton de eliminar
+        estilo.configure(
+            "botonEliminar.TButton",
+            background="#ffb2a2",  # Color de fondo normal
+            foreground="black",  # Color del texto
+            font=("Arial", 16, "bold"),
+            borderwidth=0,  # Eliminar el borde
+            relief="flat"  # Eliminar el relieve (bordes)
+        )
+        estilo.map("botonEliminar.TButton",
+                   foreground=[("pressed", "black"), ("active", "black")],  # Cambia el color del texto al presionar
+                   background=[("pressed", "#c87644"), ("active", "#e5b79b")]  # Cambia el color de fondo al presionar
+        )
+        # para el boton de editar
+        estilo.configure(
+            "botonEditar.TButton",
+            background="#edab64",  # Color de fondo normal
+            foreground="black",  # Color del texto
+            font=("Arial", 16, "bold"),
+            borderwidth=0,  # Eliminar el borde
+            relief="flat"  # Eliminar el relieve (bordes)
+        )
+        estilo.map("botonEditar.TButton",
+                   foreground=[("pressed", "black"), ("active", "black")],  # Cambia el color del texto al presionar
+                   background=[("pressed", "#bd7629"), ("active", "#d39756")]  # Cambia el color de fondo al presionar
+                   )
+        # Estilos para las tablas
+        estilo.configure('Treeview',
+                         font=("Helvetica", 14),
+                         rowheight=30)
+        estilo.map('Treeview', background=[('selected', '#948ad1')])
+        #Para el combobox
+        estilo.configure(
+            "EstiloComboBox.TCombobox",
+            foreground="#000000",  # Verde para el texto
+            background="#F5F5F5",  # Gris claro para el desplegable
+            fieldbackground="#FFFFFF",  # Blanco para el campo de texto
+            font=("Arial", 12),
+            padding=5,
+            borderwidth=2,
+            relief="solid"  # Tipo de borde (solid, groove, etc.)
+        )
+        # para etiquetas de texto
+        estilo.configure(
+            "etiquetaTexto.TLabel",
+            foreground="black",  # Color del texto
+            background="#e1f5d2",  # Fondo verde
+            font=("Helvetica", 14),  # Fuente, tamaño
+            padding=10  # Relleno interno
+        )
+
+        # Creacion del frame 2
         self.Frame2 = ttk.Frame(self)
         self.Frame2.grid(row=0,column=1, sticky="nsew")
 
@@ -23,18 +96,18 @@ class Vendedores(PlantillaAdministrador):
         self.Frame2.columnconfigure(2,weight=1)
 
         # Cargando etiquetas
-        self.etiquetaUsuarios = ttk.Label(self.Frame2, text = "Usuarios")
-        self.etiquetaUsuarios.grid(row = 0, column = 0)
+        self.etiquetaUsuarios = ttk.Label(self.Frame2, text = "Usuarios",style="etiquetaTitulo.TLabel")
+        self.etiquetaUsuarios.grid(row = 0, column = 0, columnspan=3)
 
         #Cargando boton de agregar Usuarios
-        self.botonUsuarios = ttk.Button(self.Frame2,text="Agregar usuarios", command=self.agregarUsuarios)
+        self.botonUsuarios = ttk.Button(self.Frame2,text="Agregar usuarios", command=self.agregarUsuarios, style="botonAgregar.TButton")
         self.botonUsuarios.grid(row=2,column=2, sticky="nsew", padx=10,pady=10)
 
         #Cargando boton de eliminar Usuarios
-        self.eliminarUsuarios = ttk.Button(self.Frame2,text="Eliminar Usuario", command =  self.eliminarUsuario)
+        self.eliminarUsuarios = ttk.Button(self.Frame2,text="Eliminar Usuario", command =  self.eliminarUsuario, style="botonEliminar.TButton")
         self.eliminarUsuarios.grid(row=2,column=1, sticky="nsew", padx=10,pady=10)
         # cargando boton de editar usuario
-        self.editarUsuarios = ttk.Button(self.Frame2, text="Editar Usuario", command=self.editarUsuario)
+        self.editarUsuarios = ttk.Button(self.Frame2, text="Editar Usuario", command=self.editarUsuario, style="botonEditar.TButton")
         self.editarUsuarios.grid(row=2, column=0, sticky="nsew", padx=10, pady=10)
         # Cargar la tabla usuarios
         self.crear_tabla_usuarios()
@@ -111,19 +184,19 @@ class Vendedores(PlantillaAdministrador):
 
         # Agregar widgets
 
-        #       Etiquetas
-        self.lblUsuario = ttk.Label(mini_ventana, text="Nombre: ")
+        # Etiquetas
+        self.lblUsuario = ttk.Label(mini_ventana, text="Nombre: ", style="etiquetaTexto.TLabel")
         self.lblUsuario.grid(row=0,column=0)
 
-        self.lblPassword = ttk.Label(mini_ventana, text = "Contraseña: ")
+        self.lblPassword = ttk.Label(mini_ventana, text = "Contraseña: ", style="etiquetaTexto.TLabel")
         self.lblPassword.grid(row=1,column=0)
 
-        self.lblRol = ttk.Label(mini_ventana, text="Escoja el rol: ")
+        self.lblRol = ttk.Label(mini_ventana, text="Escoja el rol: ", style="etiquetaTexto.TLabel")
         self.lblRol.grid(row=2,column=0)
 
         #       Combobox
         opciones = ["admin","usuario"]
-        self.comboRol = ttk.Combobox(mini_ventana,values=opciones, state="readonly")
+        self.comboRol = ttk.Combobox(mini_ventana,values=opciones, state="readonly", style="EstiloComboBox.TCombobox")
         self.comboRol.set(opciones[1])
         self.comboRol.grid(row=2, column=1)
 
@@ -191,13 +264,13 @@ class Vendedores(PlantillaAdministrador):
         # Agregar widgets
 
         #       Etiquetas
-        lblUsuario = ttk.Label(mini_ventana, text=f"Nombre: {valores[1]}")
+        lblUsuario = ttk.Label(mini_ventana, text=f"Nombre: {valores[1]}", style="etiquetaTexto.TLabel")
         lblUsuario.grid(row=0, column=0)
 
-        lblPassword = ttk.Label(mini_ventana, text="Contraseña actual: ")
+        lblPassword = ttk.Label(mini_ventana, text="Contraseña actual: ", style="etiquetaTexto.TLabel")
         lblPassword.grid(row=1, column=0)
 
-        lblNewPassword = ttk.Label(mini_ventana, text="Nueva contraseña: ")
+        lblNewPassword = ttk.Label(mini_ventana, text="Nueva contraseña: ", style="etiquetaTexto.TLabel")
         lblNewPassword.grid(row=2,column=0)
 
         EntradaPassword = ttk.Entry(mini_ventana)

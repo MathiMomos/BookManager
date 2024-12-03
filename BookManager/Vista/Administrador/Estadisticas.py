@@ -12,36 +12,78 @@ class Estadisticas(PlantillaAdministrador):
         self.actualizar_estadisticas()
 
     def agregar_mas_widgets(self):
+        # Aqui van los estilos
+        estilo = ttk.Style()
+        estilo.theme_use("clam")
+        # Estilos para las etiquetas de titulo
+        estilo.configure(
+            "etiquetaTitulo.TLabel",
+            foreground="Gray",  # Color del texto
+
+            font=("Helvetica", 16, "bold"),  # Tipo de fuente, tamaño, y estilo (negrita)
+        )
+        # para etiquetas de texto
+        estilo.configure(
+            "etiquetaTexto.TLabel",
+            foreground="black",  # Color del texto
+            background="#e1f5d2",  # Fondo verde
+            font=("Helvetica", 16),  # Fuente, tamaño
+            padding=10  # Relleno interno
+        )
+        # para etiquetas de texto de numero
+        estilo.configure(
+            "etiquetaTexto2.TLabel",
+            foreground="black",  # Color del texto
+            background="#e1f5d2",  # Fondo verde
+            font=("Helvetica", 16, "bold"),  # Fuente, tamaño y negrita
+            padding=10  # Relleno interno
+        )
+        estilo.configure(
+            "estiloFrame.TFrame",
+            background="#e1f5d2",
+            padding=2
+        )
         # Crear el Frame
         self.Frame2 = ttk.Frame(self)
         self.Frame2.grid(row=0, column=1, sticky="nsew")
 
+        self.Frame2.rowconfigure(0,weight=1)
         self.Frame2.rowconfigure(1, weight=2)
-        self.Frame2.rowconfigure(2, weight=1)
-        self.Frame2.rowconfigure(3, weight=1)
-        self.Frame2.rowconfigure(4, weight=1)
-        self.Frame2.rowconfigure(5, weight=2)
+        self.Frame2.rowconfigure(2,weight=1)
+
         self.Frame2.columnconfigure(0, weight=1)
         self.Frame2.columnconfigure(1, weight=1)
 
+        # Etiqueta titulo
+        self.TituloEstadistica = ttk.Label(self.Frame2, text = "ESTADISTICA", style="etiquetaTitulo.TLabel")
+        self.TituloEstadistica.grid(row = 0, column=0, columnspan=2)
+
+        self.Frame3 = ttk.Frame(self.Frame2, style="estiloFrame.TFrame")
+        self.Frame3.grid(row=1, column=0, columnspan=2, sticky="nsew", padx=20,pady=20)
+        # configurar las grillas
+        for i in range(0,3):
+            self.Frame3.rowconfigure(i,weight=1)
+            self.Frame3.columnconfigure(i,weight=1)
+
+
         # Etiquetas (Contenido adicional ya existente)
-        self.etiquetaMayorProductoVendido = ttk.Label(self.Frame2, text="Producto con más ventas: ")
-        self.etiquetaMayorProductoVendido.grid(row=1, column=0)
+        self.etiquetaMayorProductoVendido = ttk.Label(self.Frame3, text="Producto con más ventas: ", style="etiquetaTexto.TLabel")
+        self.etiquetaMayorProductoVendido.grid(row=0, column=0)
 
-        self.etiquetaArticuloMayor = ttk.Label(self.Frame2, text="[Articulo más vendido]")
-        self.etiquetaArticuloMayor.grid(row=1, column=1)
+        self.etiquetaArticuloMayor = ttk.Label(self.Frame3, text="[Articulo más vendido]", style="etiquetaTexto2.TLabel")
+        self.etiquetaArticuloMayor.grid(row=0, column=1)
 
-        self.etiquetaMenorProductoVendido = ttk.Label(self.Frame2, text="Producto con menos ventas: ")
-        self.etiquetaMenorProductoVendido.grid(row=2, column=0)
+        self.etiquetaMenorProductoVendido = ttk.Label(self.Frame3, text="Producto con menos ventas: ",style="etiquetaTexto.TLabel")
+        self.etiquetaMenorProductoVendido.grid(row=1, column=0)
 
-        self.etiquetaArticuloMenor = ttk.Label(self.Frame2, text="[Articulo menos vendido]")
-        self.etiquetaArticuloMenor.grid(row=2, column=1)
+        self.etiquetaArticuloMenor = ttk.Label(self.Frame3, text="[Articulo menos vendido]", style="etiquetaTexto2.TLabel")
+        self.etiquetaArticuloMenor.grid(row=1, column=1)
 
-        self.etiquetaTotalDeVentasAlDia = ttk.Label(self.Frame2, text="Total de ventas de hoy: ")
-        self.etiquetaTotalDeVentasAlDia.grid(row=3, column=0)
+        self.etiquetaTotalDeVentasAlDia = ttk.Label(self.Frame3, text="Total de ventas de hoy: ", style="etiquetaTexto.TLabel")
+        self.etiquetaTotalDeVentasAlDia.grid(row=2, column=0)
 
-        self.etiquetaTotalVentasCambiarTexto = ttk.Label(self.Frame2, text="[Total de ventas]")
-        self.etiquetaTotalVentasCambiarTexto.grid(row=3, column=1)
+        self.etiquetaTotalVentasCambiarTexto = ttk.Label(self.Frame3, text="[Total de ventas]", style="etiquetaTexto2.TLabel")
+        self.etiquetaTotalVentasCambiarTexto.grid(row=2, column=1)
 
     def actualizar_estadisticas(self):
         # Obtener los datos del controlador

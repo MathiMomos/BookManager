@@ -23,20 +23,58 @@ class Inventario(PlantillaAdministrador):
 
             font=("Helvetica", 16, "bold"),  # Tipo de fuente, tamaño, y estilo (negrita)
         )
-            # Estilos para los botones
+        # Este es para el boton de agregar
         estilo.configure(
-            "botonEstilo.TButton",
-            background="#c7c1ec",  # Color de fondo normal
+            "botonAgregar.TButton",
+            background="#e1ffcd",  # Color de fondo normal (Verde)
             foreground="black",  # Color del texto
             font=("Arial", 16, "bold"),
             borderwidth=0,  # Eliminar el borde
             relief="flat"  # Eliminar el relieve (bordes)
         )
-        estilo.map("botonEstilo.TButton",
+        estilo.map("botonAgregar.TButton",
                    foreground=[("pressed", "black"), ("active", "black")],  # Cambia el color del texto al presionar
-                   background=[("pressed", "#7668d0"), ("active", "#948ad1")]  # Cambia el color de fondo al presionar
+                   background=[("pressed", "#6ec137"), ("active", "#9dc583")]  # Cambia el color de fondo al presionar
                    )
-
+        # Para el boton de eliminar
+        estilo.configure(
+            "botonEliminar.TButton",
+            background="#ffb2a2",  # Color de fondo normal
+            foreground="black",  # Color del texto
+            font=("Arial", 16, "bold"),
+            borderwidth=0,  # Eliminar el borde
+            relief="flat"  # Eliminar el relieve (bordes)
+        )
+        estilo.map("botonEliminar.TButton",
+                   foreground=[("pressed", "black"), ("active", "black")],  # Cambia el color del texto al presionar
+                   background=[("pressed", "#c87644"), ("active", "#e5b79b")]  # Cambia el color de fondo al presionar
+                   )
+        # para el boton de editar
+        estilo.configure(
+            "botonEditar.TButton",
+            background="#edab64",  # Color de fondo normal
+            foreground="black",  # Color del texto
+            font=("Arial", 16, "bold"),
+            borderwidth=0,  # Eliminar el borde
+            relief="flat"  # Eliminar el relieve (bordes)
+        )
+        estilo.map("botonEditar.TButton",
+                   foreground=[("pressed", "black"), ("active", "black")],  # Cambia el color del texto al presionar
+                   background=[("pressed", "#bd7629"), ("active", "#d39756")]  # Cambia el color de fondo al presionar
+                   )
+        # para el boton de exportar
+        estilo.configure(
+            "botonEstilo.TButton",
+            background="#93e8bf",  # Color de fondo normal
+            foreground="black",  # Color del texto
+            font=("Arial", 16, "bold"),
+            borderwidth=0,  # Eliminar el borde
+            relief="flat"  # Eliminar el relieve (bordes)
+        )
+        estilo.map("botonEditar.TButton",
+                   foreground=[("pressed", "black"), ("active", "black")],  # Cambia el color del texto al presionar
+                   background=[("pressed", "#38c582"), ("active", "#6ec49b")]  # Cambia el color de fondo al presionar
+                   )
         # Estilos para las tablas
         estilo.configure('Treeview',
                          font=("Helvetica", 14),
@@ -67,9 +105,10 @@ class Inventario(PlantillaAdministrador):
 
         nombre_boton_crud = ["Añadir producto", "Modificar producto", "Eliminar producto"]
         nombre_metodo_boton = [self.agregar, self.modificar, self.eliminar]
+        nombre_estilo = ["botonAgregar.TButton", "botonEditar.TButton", "botonEliminar.TButton"]
 
-        for i, texto, comando in zip(range(0,2+1),nombre_boton_crud,nombre_metodo_boton):
-            self.boton = ttk.Button(self.Frame2, text=texto,command=comando, style="botonEstilo.TButton")
+        for i, texto, comando, estilo in zip(range(0,2+1),nombre_boton_crud,nombre_metodo_boton, nombre_estilo):
+            self.boton = ttk.Button(self.Frame2, text=texto,command=comando, style=estilo)
             self.boton.grid(row=1,column=i,sticky="nsew", padx=10,pady=10)
 
         # Boton de exportar
@@ -109,20 +148,52 @@ class Inventario(PlantillaAdministrador):
             self.tabla.insert("", "end", values=(id, nombre, cantidad, precio))
 
     def mostrar_ventana_formulario(self, modo="agregar",datos=None):
-        if datos is None:
-            messagebox.showinfo("Notificacion", "Primero debe escoger una celda")
-            return
+        if modo == "modificar":
+            if datos is None:
+                messagebox.showinfo("Notificacion", "Primero debe escoger una celda")
+                return
 
         def guardar_datos():
-            nombre = entrada1.get()
-            cantidad = int(entrada2.get())
-            precio = entrada3.get()
+            try:
+                # Obtener valores de las entradas
+                nombre = entrada1.get().strip()
+                cantidad = entrada2.get().strip()
+                precio = entrada3.get().strip()
+
+                # Validar nombre
+                if not nombre:
+                    messagebox.showerror("Error", "El nombre no puede estar vacío.")
+                    return
+
+                # Validar cantidad
+                if not cantidad.isdigit() or int(cantidad) <= 0:
+                    messagebox.showerror("Error", "La cantidad debe ser un número entero positivo.")
+                    return
+
+                # Validar precio
+                try:
+                    precio = float(precio)
+                    if precio <= 0:
+                        messagebox.showerror("Error", "El precio debe ser un número positivo.")
+                        return
+                except ValueError:
+                    messagebox.showerror("Error", "El precio debe ser un número válido.")
+                    return
+
+                # Si todo está bien
+                messagebox.showinfo("Éxito", "Datos ingresados correctamente:\n"
+                                             f"Nombre: {nombre}\nCantidad: {cantidad}\nPrecio: {precio}")
+            except Exception as e:
+                messagebox.showerror("Error", f"Se produjo un error: {e}")
             if modo == "agregar":
                 from BookManager.Controlador.AdministradorControlador import Administrador
                 if nombre and cantidad and precio:
+
                     admin = Administrador()
                     admin.agregarProducto(nombre,cantidad,precio)
                     self.actualizarTabla()
+                else:
+                    tk.messagebox.showerror("Error", "Las entradas estan vacías")
             elif modo == "modificar":
                 if nombre == datos[1] and cantidad == datos[2] and precio == datos[3]:
                     messagebox.showinfo("Sin cambios", "No se realizaron cambios en los datos.")
@@ -182,7 +253,21 @@ class Inventario(PlantillaAdministrador):
         valores = self.obtener_fila_seleccionada()
         self.mostrar_ventana_formulario(modo="modificar", datos=valores)
     def eliminar(self):
-        pass
+        from BookManager.Controlador.InventarioControlador import InventarioControlador
+        valores = self.obtener_fila_seleccionada()
+        if valores:
+            nombre = valores[1]
+            admin = InventarioControlador()
+            respuesta = tk.messagebox.askyesno("Confirmacion", "Esta seguro que desea eliminar este registro?")
+            if respuesta:
+                admin.eliminar_producto(nombre)
+                tk.messagebox.showinfo("Accion exitosa", f"Producto '{nombre}' eliminado correctamente")
+                self.actualizarTabla()
+            else:
+                return
+
+        else:
+            tk.messagebox.showerror("Error", "Primero debes seleccionar una celda")
 
     def exportar_inventario(self):
         controlador = InventarioControlador()

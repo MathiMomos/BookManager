@@ -2,9 +2,10 @@ import os
 from tkinter import Tk, StringVar, messagebox
 from tkinter import ttk
 
+from PIL import Image, ImageTk
+
 from BookManager.Vista.Administrador.Inicio import Inicio
 from BookManager.Vista.Vendedor.Vender import Vender
-
 
 import sqlite3
 import hashlib
@@ -13,8 +14,10 @@ class Login(Tk):
     def __init__(self):
         super().__init__()
         self.title("Login")
-        self.geometry("400x300")
+        self.geometry("500x400")
         self.centrar_ventana()
+
+
 
         ttk.Label(self, text="Usuario:").pack(pady=5)
         self.entrada_usuario = ttk.Entry(self)
